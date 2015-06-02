@@ -57,10 +57,9 @@ public class AircraftTab {
         this.minrankLabel = minrankLabel;
         this.ranklevelLabel = ranklevelLabel;
         this.aircraftImage = aircraftImage;
-        createList(father.aircraftList);
     }
 
-    private void createList(ArrayList<Aircraft> aircraftList) {
+    public void createList(ArrayList<Aircraft> aircraftList) {
         for (Aircraft aircraft : aircraftList) {
             Label name = new Label(aircraft.getName());
             name.setOnMouseClicked((MouseEvent event) -> {
@@ -71,7 +70,8 @@ public class AircraftTab {
     }
 
     private void displayByID(Aircraft aircraft) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        aircraft.getId();
+        idLabel.setText(String.valueOf(aircraft.getId()));
     }
 
 }
