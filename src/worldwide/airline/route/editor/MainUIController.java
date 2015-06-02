@@ -368,7 +368,7 @@ public class MainUIController implements Initializable {
             writer.newLine();
             writer.write("PASSWORD = " + PASSWORD);
         } catch (Exception e) {
-            e.printStackTrace();
+            e.printStackTrace(System.err);
         } finally {
             try {
                 // Close the writer regardless of what happens...
