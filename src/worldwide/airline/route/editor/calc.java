@@ -5,11 +5,17 @@
  */
 package worldwide.airline.route.editor;
 
+import java.awt.Desktop;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.text.SimpleDateFormat;
+
 /**
  *
  * @author patrickburkart
  */
-public class Val {
+public class calc {
 
     public static int StringToInt(String toConvert) {
         int toReturn = 0;
@@ -74,5 +80,25 @@ public class Val {
         }
         return newArray;
 
+    }
+    
+
+    static String getCurrentTimeAsString(String format) {
+        return new SimpleDateFormat(format).format(new java.util.Date());
+    }
+
+    static String getTempPath() {
+        String property = "java.io.tmpdir";
+        return System.getProperty(property);
+    }
+
+    public static void openWebpage(String url) {
+        if (Desktop.isDesktopSupported()) {
+            try {
+                Desktop.getDesktop().browse(new URI(url));
+            } catch (IOException | URISyntaxException ex) {
+                ex.printStackTrace(System.out);
+            }
+        }
     }
 }

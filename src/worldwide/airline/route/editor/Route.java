@@ -74,21 +74,21 @@ public class Route {
     public void registerInformation(String[] information){
         
         code = information[0];
-        flightnum = Val.StringToInt(information[1]);
+        flightnum = calc.StringToInt(information[1]);
         depicao = information[2];
         arricao = information[3];
         route = information[4];
         aircraft = information[5];
-        flightlevel = Val.StringToInt(information[6]);
-        distance = Val.StringToDouble(information[7]);
+        flightlevel = calc.StringToInt(information[6]);
+        distance = calc.StringToDouble(information[7]);
         deptime = information[8];
         arrtime = information[9];
-        flighttime = Val.StringToDouble(information[10]);
+        flighttime = calc.StringToDouble(information[10]);
         notes = information[11];
-        price = Val.StringToDouble(information[12]);
+        price = calc.StringToDouble(information[12]);
         flighttype = information[13];
         daysofweek = information[14];
-        enabled = Val.StringToBoolean(information[15]);
+        enabled = calc.StringToBoolean(information[15]);
     }
     
     public int getTotalNumber(){
@@ -110,8 +110,8 @@ public class Route {
     }
     
     public String[] getAircraftInformation(String [] aircrafts){
-        if(Val.notInArray(aircrafts,aircraft)){
-            aircrafts = Val.addToArray(aircrafts,aircraft);
+        if(calc.notInArray(aircrafts,aircraft)){
+            aircrafts = calc.addToArray(aircrafts,aircraft);
         }
         if(next!=null){
             return next.getAircraftInformation(aircrafts);

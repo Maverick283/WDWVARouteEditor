@@ -52,6 +52,7 @@ public class MainUIController implements Initializable {
         errorWindow = new ErrorMessageController(this);
         mainPanel.getChildren().addAll(createImportButton(), createDownloadButton(14, 40));
         placeSideLabel(14, 80);
+        checkLogin();
     }
 
     public Button createDownloadButton(int x, int y) {
@@ -304,6 +305,10 @@ String aircradtNAME = aircraftList.get(aircraftID - 1).getName();
         } catch (SQLException | ClassNotFoundException ex) {
             ex.printStackTrace(System.err);
         }
+    }
+
+    private void checkLogin() {
+        calc.getTempPath();
     }
 
 }
