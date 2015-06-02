@@ -66,6 +66,7 @@ public class AircraftTab {
             name.setOnMouseClicked((MouseEvent event) -> {
                 displayByID(aircraft.getId());
             });
+            listBox.getChildren().add(name);
         }
     }
 
