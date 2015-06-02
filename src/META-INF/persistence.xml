@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="2.1" xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
+  <persistence-unit name="Worldwide_Airline_Route_EditorPU" transaction-type="RESOURCE_LOCAL">
+    <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+    <class>sql.Adminlog</class>
+    <class>sql.Credits</class>
+    <class>sql.Downloads</class>
+    <class>sql.EntranceQuestions</class>
+    <class>sql.EntranceSettings</class>
+    <class>sql.Awardsgranted</class>
+    <class>sql.Awards</class>
+    <class>sql.Aircraft</class>
+    <class>sql.Airports</class>
+    <class>sql.Airlines</class>
+    <class>sql.Entrance</class>
+    <class>sql.Bids</class>
+    <class>sql.Acarsdata</class>
+    <class>sql.Customfields</class>
+    <class>sql.Acarschat</class>
+    <class>sql.Groups</class>
+    <class>sql.Financedata</class>
+    <class>sql.Expenses</class>
+    <class>sql.KacarsPmlog</class>
+    <class>sql.Fieldvalues</class>
+    <class>sql.Groupmembers</class>
+    <class>sql.Loa</class>
+    <class>sql.Fuelprices</class>
+    <class>sql.Pilots</class>
+    <class>sql.Pireps</class>
+    <class>sql.RewardsLogins</class>
+    <class>sql.RewardsPurchases</class>
+    <class>sql.Pirepfields</class>
+    <class>sql.Pirepcomments</class>
+    <class>sql.RewardsPoints</class>
+    <class>sql.RewardsStoreCategory</class>
+    <class>sql.RewardsSettings</class>
+    <class>sql.RewardsRecords</class>
+    <class>sql.News</class>
+    <class>sql.RewardsStoreItems</class>
+    <class>sql.Ranks</class>
+    <class>sql.RealscheduleliteLocation</class>
+    <class>sql.RewardsStoreItemTypes</class>
+    <class>sql.Pirepvalues</class>
+    <class>sql.Pages</class>
+    <class>sql.Navdata</class>
+    <class>sql.Settings</class>
+    <class>sql.ScreenshotsRatings</class>
+    <class>sql.Updates</class>
+    <class>sql.WdwEntranceSettings</class>
+    <class>sql.WdwEntranceQuestions</class>
+    <class>sql.ScreenshotsComments</class>
+    <class>sql.TopFlights</class>
+    <class>sql.Sessions</class>
+    <class>sql.Schedules</class>
+    <class>sql.WdwEntrance</class>
+    <class>sql.RulesCategories</class>
+    <class>sql.Screenshots</class>
+    <class>sql.Rules</class>
+    <properties>
+      <property name="javax.persistence.jdbc.url" value="jdbc:mysql://wdwva.com:3306/wdwvacom_wdw"/>
+      <property name="javax.persistence.jdbc.user" value="wdwvacom_pat"/>
+      <property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver"/>
+      <property name="javax.persistence.jdbc.password" value="KZ6Kw37pH5VzulYz"/>
+    </properties>
+  </persistence-unit>
+</persistence>
