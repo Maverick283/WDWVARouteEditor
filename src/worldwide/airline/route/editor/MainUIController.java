@@ -186,97 +186,6 @@ public class MainUIController implements Initializable {
                 //Retrieve Data                
                 int id = rs.getInt("id");
                 int aircraftID = rs.getInt("aircraft");
-                //Checks for aircraft types depending on the ID specified in the schedules (Needs to be shrunken into a shorter line of code)
-                if (aircraftID == 1) {
-                    aircraftTYPE = ("B738");
-                }
-                if (aircraftID == 2) {
-                    aircraftTYPE = ("B738");
-                }
-                if (aircraftID == 3) {
-                    aircraftTYPE = ("A319");
-                }
-                if (aircraftID == 4) {
-                    aircraftTYPE = ("A319");
-                }
-                if (aircraftID == 5) {
-                    aircraftTYPE = ("A320");
-                }
-                if (aircraftID == 6) {
-                    aircraftTYPE = ("A321");
-                }
-                if (aircraftID == 7) {
-                    aircraftTYPE = ("A388");
-                }
-                if (aircraftID == 8) {
-                    aircraftTYPE = ("B738");
-                }
-                if (aircraftID == 9) {
-                    aircraftTYPE = ("B738");
-                }
-                if (aircraftID == 10) {
-                    aircraftTYPE = ("B744");
-                }
-                if (aircraftID == 11) {
-                    aircraftTYPE = ("B752");
-                }
-                if (aircraftID == 12) {
-                    aircraftTYPE = ("B772");
-                }
-                if (aircraftID == 13) {
-                    aircraftTYPE = ("B787");
-                }
-                if (aircraftID == 14) {
-                    aircraftTYPE = ("CRJ7");
-                }
-                if (aircraftID == 15) {
-                    aircraftTYPE = ("DH8D");
-                }
-                if (aircraftID == 16) {
-                    aircraftTYPE = ("DH8D");
-                }
-                if (aircraftID == 17) {
-                    aircraftTYPE = ("MD11");
-                }
-                if (aircraftID == 18) {
-                    aircraftTYPE = ("B752");
-                }
-                if (aircraftID == 19) {
-                    aircraftTYPE = ("B752");
-                }
-                if (aircraftID == 20) {
-                    aircraftTYPE = ("A346");
-                }
-                if (aircraftID == 21) {
-                    aircraftTYPE = ("A332");
-                }
-                if (aircraftID == 22) {
-                    aircraftTYPE = ("B772-F");
-                }
-                if (aircraftID == 23) {
-                    aircraftTYPE = ("B744-F");
-                }
-                if (aircraftID == 24) {
-                    aircraftTYPE = ("A346-F");
-                }
-                if (aircraftID == 25) {
-                    aircraftTYPE = ("MD11-F");
-                }
-                if (aircraftID == 26) {
-                    aircraftTYPE = ("A346-F");
-                }
-                if (aircraftID == 27) {
-                    aircraftTYPE = ("B752-F");
-                }
-                if (aircraftID == 28) {
-                    aircraftTYPE = ("DH8F-F");
-                }
-                if (aircraftID == 29) {
-                    aircraftTYPE = ("B738-F");
-                }
-                if (aircraftID == 30) {
-                    aircraftTYPE = ("E190");
-                }
                 String distance = rs.getString("distance");
                 String aircradtNAME = aircraftList.get(aircraftID - 1).getName();
                 //Get Data to a string that can be parsed
@@ -297,7 +206,7 @@ public class MainUIController implements Initializable {
                     //compare aircraft range to route distance
                     if (rangeInt < distanceInt) {
                         //print message if needed
-                        System.out.print("Route distance: " + distance + "nm" + "    " + "Aircraft type: " + aircraftTYPE + "    " + "Range of aircraft: " + String.valueOf(rangeInt) + "nm" + "   ");
+                        System.out.print("Route distance: " + distance + "nm/t" + "Aircraft type: " + aircraftTYPE + "/tRange of aircraft: " + String.valueOf(rangeInt) + "nm" ;
                         System.out.println("Route with the ID " + id + " has a Problem!" + aircradtNAME);
                     }
                 } catch (NumberFormatException e) {
@@ -317,7 +226,7 @@ public class MainUIController implements Initializable {
     }
 
     private void checkLogin() {
-        String tempPath = calc.getTempPath()+"/WDWVALogin.txt";
+        String tempPath = calc.getTempPath() + "/WDWVALogin.txt";
         try (BufferedReader br = new BufferedReader(new FileReader(tempPath))) {
             String line;
             while ((line = br.readLine()) != null) {
@@ -339,7 +248,7 @@ public class MainUIController implements Initializable {
                     default:
                         System.out.println("Login data not complete...");
                         break;
-                        
+
                 }
             }
         } catch (IOException e) {
@@ -406,7 +315,7 @@ public class MainUIController implements Initializable {
     private void saveLoginData() {
         BufferedWriter writer = null;
         try {
-            File logFile = new File(calc.getTempPath()+"/WDWVALogin.txt");
+            File logFile = new File(calc.getTempPath() + "/WDWVALogin.txt");
 
             // This will output the full path where the file will be written to...
             System.out.println(logFile.getCanonicalPath());
@@ -414,9 +323,9 @@ public class MainUIController implements Initializable {
             writer = new BufferedWriter(new FileWriter(logFile));
             writer.write("URL = " + URL);
             writer.newLine();
-            writer.write("USERNAME = " + USERNAME );
+            writer.write("USERNAME = " + USERNAME);
             writer.newLine();
-            writer.write("PASSWORD = " + PASSWORD );
+            writer.write("PASSWORD = " + PASSWORD);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
