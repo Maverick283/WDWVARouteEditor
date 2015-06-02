@@ -31,6 +31,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -98,11 +99,18 @@ public class MainUIController implements Initializable {
     @FXML
     private Button changeLoginCredentialsButton;
 
+    AircraftTab aircraftTab;
+    @FXML
+    private ImageView aircraftImage;
+    @FXML
+    private VBox listBox;
+    
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         errorWindow = new ErrorMessageController(this);
         placeSideLabel(14, 80);
         checkLogin();
+        aircraftTab = new AircraftTab(this, listBox,idLabel,icaoLabel,nameLabel,fullnameLabel,registrationLabel,downloadlinkLabel,imagelinkLabel,rangeLabel,weightLabel,cruiseLabel,maxpaxLabel,maxcargoLabel,minrankLabel,ranklevelLabel,aircraftImage);
     }
 
     @FXML
