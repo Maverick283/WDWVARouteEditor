@@ -187,7 +187,7 @@ public class MainUIController implements Initializable {
                 int id = rs.getInt("id");
                 int aircraftID = rs.getInt("aircraft");
                 String distance = rs.getString("distance");
-                String aircradtNAME = aircraftList.get(aircraftID - 1).getName();
+                String aircraftNAME = aircraftList.get(aircraftID - 1).getName();
                 //Get Data to a string that can be parsed
                 distance = distance.replaceAll("[^\\d.]", "");
 
@@ -206,8 +206,8 @@ public class MainUIController implements Initializable {
                     //compare aircraft range to route distance
                     if (rangeInt < distanceInt) {
                         //print message if needed
-                        System.out.print("Route distance: " + distance + "nm/t" + "Aircraft type: " + aircraftTYPE + "/tRange of aircraft: " + String.valueOf(rangeInt) + "nm" ;
-                        System.out.println("Route with the ID " + id + " has a Problem!" + aircradtNAME);
+                        System.out.print("Route distance: " + String.valueOf(distanceInt) + "nm  \t" + "Aircraft type: " + aircraftNAME + "  \tRange of aircraft: " + String.valueOf(rangeInt) + "nm\t" );
+                        System.out.println("Route with the ID " + id + " has a Problem!");
                     }
                 } catch (NumberFormatException e) {
                     //catches Parse Errors, and outputs the strings that were tried to be parsed.
