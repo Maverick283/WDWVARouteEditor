@@ -12,6 +12,8 @@ Done:
 
 ✈ Added a query, which checks for problematic routes (Checks for aircraft range and checks the distance of the route)
 
+✈ Add a login system to database to prevent unauthorized access
+
 
 To do:
 
@@ -20,8 +22,6 @@ To do:
 ✈ Design a proper interface for easy use
 
 ✈ Add a feature, which allows to add/edit routes directly trough the program
-
-✈ Add a login system to database to prevent unauthorized access
 
 ✈ ...
 
