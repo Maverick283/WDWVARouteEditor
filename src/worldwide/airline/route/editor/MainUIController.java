@@ -190,7 +190,6 @@ public class MainUIController implements Initializable {
                 String aircraftNAME = aircraftList.get(aircraftID - 1).getName();
                 //Get Data to a string that can be parsed
                 distance = distance.replaceAll("[^\\d.]", "");
-
                 String range = aircraftList.get(aircraftID - 1).getRange();
                 range = range.replaceAll("[^\\d.]", "");
                 try {
