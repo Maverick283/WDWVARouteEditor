@@ -64,13 +64,13 @@ public class AircraftTab {
         for (Aircraft aircraft : aircraftList) {
             Label name = new Label(aircraft.getName());
             name.setOnMouseClicked((MouseEvent event) -> {
-                displayByID(aircraft.getId());
+                displayByID(aircraft);
             });
             listBox.getChildren().add(name);
         }
     }
 
-    private void displayByID(int id) {
+    private void displayByID(Aircraft aircraft) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

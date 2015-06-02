@@ -105,6 +105,8 @@ public class MainUIController implements Initializable {
     @FXML
     private VBox listBox;
     
+    ArrayList<Aircraft> aircraftList;
+    
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         errorWindow = new ErrorMessageController(this);
@@ -175,7 +177,7 @@ public class MainUIController implements Initializable {
         ResultSet rs = stmt.executeQuery(sql);
 
         //STEP 5: Extract data from result set
-        ArrayList<Aircraft> aircraftList = new ArrayList();
+        aircraftList = new ArrayList();
         while (rs.next()) {
             //Retrieve all aircraft information           
             int id = rs.getInt("id");
