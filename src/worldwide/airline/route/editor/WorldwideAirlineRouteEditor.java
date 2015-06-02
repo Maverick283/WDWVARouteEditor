@@ -6,25 +6,34 @@
 package worldwide.airline.route.editor;
 
 import javafx.application.Application;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 /**
  *
  * @author patrickburkart
  */
 public class WorldwideAirlineRouteEditor extends Application {
-    
+
     @Override
     public void start(Stage stage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("MainUI.fxml"));
-        
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("MainUI.fxml"));
+        Parent root = loader.load();
+        MainUIController uI = loader.<MainUIController>getController();
+
         Scene scene = new Scene(root);
-        
+
         stage.setScene(scene);
         stage.show();
+        stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+            public void handle(WindowEvent we) {
+                uI.disconnectFromDB();
+            }
+        });
     }
 
     /**
@@ -33,5 +42,5 @@ public class WorldwideAirlineRouteEditor extends Application {
     public static void main(String[] args) {
         launch(args);
     }
-    
+
 }

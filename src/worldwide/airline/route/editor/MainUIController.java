@@ -58,71 +58,64 @@ public class MainUIController implements Initializable {
     private RouteOrganizer routes;
     private String aircraftTYPE;
 
+    Connection con;
+
     private String URL;
     private String USERNAME;
     private String PASSWORD;
+    @FXML
+    private Button connectToDBButton;
+    @FXML
+    private Label idLabel;
+    @FXML
+    private Label icaoLabel;
+    @FXML
+    private Label nameLabel;
+    @FXML
+    private Label fullnameLabel;
+    @FXML
+    private Label registrationLabel;
+    @FXML
+    private Label downloadlinkLabel;
+    @FXML
+    private Label imagelinkLabel;
+    @FXML
+    private Label rangeLabel;
+    @FXML
+    private Label weightLabel;
+    @FXML
+    private Label cruiseLabel;
+    @FXML
+    private Label maxpaxLabel;
+    @FXML
+    private Label maxcargoLabel;
+    @FXML
+    private Label minrankLabel;
+    @FXML
+    private Label ranklevelLabel;
+    @FXML
+    private Label loginStatusLabel;
+    @FXML
+    private Button changeLoginCredentialsButton;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         errorWindow = new ErrorMessageController(this);
-        mainPanel.getChildren().addAll(createImportButton(), createDownloadButton(14, 40));
         placeSideLabel(14, 80);
         checkLogin();
     }
 
-    public Button createDownloadButton(int x, int y) {
-        downloadButton = new Button("Access DB");
-        downloadButton.setOnAction((final ActionEvent e) -> {
-            connectToDB();
-            //getAirplanes();
-        });
-        downloadButton.setLayoutX(x);
-        downloadButton.setLayoutY(y);
-        return downloadButton;
-    }
-
+    @FXML
     public void connectToDB() {
         try {
             Class.forName("com.mysql.jdbc.Driver");
-            Connection conn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
-            System.out.println("Creating statement...");
-            Statement stmt = conn.createStatement();
-            String sql;
-            sql = "SELECT * FROM aircraft";
-            ResultSet rs = stmt.executeQuery(sql);
+            con = DriverManager.getConnection(URL, USERNAME, PASSWORD);
+            loginStatusLabel.setText("Connected as " + USERNAME);
+            getAircrafts();
 
-            //STEP 5: Extract data from result set
-            ArrayList<Aircraft> aircraftList = new ArrayList();
-            while (rs.next()) {
-                //Retrieve by column name                
-                int id = rs.getInt("id");
-                String name = rs.getString("name");
-                String range = rs.getString("range");
-
-                System.out.println(String.valueOf(id) + " " + range);
-
-                aircraftList.add(new Aircraft(id, range, name));
-
-            }
-            checkAllRoutesForAircraftCompatibility(aircraftList);
-
-            //STEP 6: Clean-up environment
-            rs.close();
-            stmt.close();
-            conn.close();
         } catch (SQLException | ClassNotFoundException ex) {
             ex.printStackTrace(System.err);
         }
-    }
-
-    public Button createImportButton() {
-        importButton = new Button("Import .csv File");
-        importButton.setOnAction((final ActionEvent e) -> {
-            openFileChooser();
-        });
-        importButton.setLayoutX(14);
-        importButton.setLayoutY(14);
-        return importButton;
     }
 
     private void openFileChooser() {
@@ -167,17 +160,45 @@ public class MainUIController implements Initializable {
         sideLabels.getChildren().addAll(labelPart, numberPart);
     }
 
-    private void getAirplanes() {
+    private void getAircrafts() throws SQLException {
+        Statement stmt = con.createStatement();
+        String sql;
+        sql = "SELECT * FROM aircraft";
+        ResultSet rs = stmt.executeQuery(sql);
 
-        System.out.println();
+        //STEP 5: Extract data from result set
+        ArrayList<Aircraft> aircraftList = new ArrayList();
+        while (rs.next()) {
+            //Retrieve all aircraft information           
+            int id = rs.getInt("id");
+            String icao = rs.getString("icao");
+            String name = rs.getString("name");
+            String fullname = rs.getString("fullname");
+            String registration = rs.getString("registration");
+            String downloadlink = rs.getString("downloadlink");
+            String imagelink = rs.getString("imagelink");
+            String range = rs.getString("range");
+            String weight = rs.getString("weight");
+            String cruise = rs.getString("cruise");
+            float maxpax = rs.getFloat("maxpax");
+            float maxcargo = rs.getFloat("maxcargo");          
+            int minrank = rs.getInt("minrank");          
+            int ranklevel = rs.getInt("ranklevel");
+            short enabled = rs.getShort("enabled");
+
+            aircraftList.add(new Aircraft(id, icao, name, fullname, registration, downloadlink, imagelink, range, weight, cruise, maxpax, maxcargo, minrank, ranklevel, enabled));
+
+        }
+        checkAllRoutesForAircraftCompatibility(aircraftList);
+
+        //STEP 6: Clean-up environment
+        rs.close();
+        stmt.close();
     }
 
     private void checkAllRoutesForAircraftCompatibility(ArrayList<Aircraft> aircraftList) {
         try {
-            Class.forName("com.mysql.jdbc.Driver");
-            Connection conn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
-            System.out.println("Creating statement...");
-            Statement stmt = conn.createStatement();
+            Statement stmt = con.createStatement();
             String sql;
             sql = "SELECT * FROM schedules";
             ResultSet rs = stmt.executeQuery(sql);
@@ -190,7 +211,7 @@ public class MainUIController implements Initializable {
                 String aircraftNAME = aircraftList.get(aircraftID - 1).getName();
                 //Get Data to a string that can be parsed
                 distance = distance.replaceAll("[^\\d.]", "");
-                
+
                 String range = aircraftList.get(aircraftID - 1).getRange();
                 range = range.replaceAll("[^\\d.]", "");
                 try {
@@ -206,7 +227,7 @@ public class MainUIController implements Initializable {
                     //compare aircraft range to route distance
                     if (rangeInt < distanceInt) {
                         //print message if needed
-                        System.out.print("Route distance: " + String.valueOf(distanceInt) + "nm  \t" + "Aircraft type: " + aircraftNAME + "  \tRange of aircraft: " + String.valueOf(rangeInt) + "nm\t" );
+                        System.out.print("Route distance: " + String.valueOf(distanceInt) + "nm  \t" + "Aircraft type: " + aircraftNAME + "  \tRange of aircraft: " + String.valueOf(rangeInt) + "nm\t");
                         System.out.println("Route with the ID " + id + " has a Problem!");
                     }
                 } catch (NumberFormatException e) {
@@ -219,8 +240,7 @@ public class MainUIController implements Initializable {
             //STEP 6: Clean-up environment
             rs.close();
             stmt.close();
-            conn.close();
-        } catch (SQLException | ClassNotFoundException ex) {
+        } catch (SQLException ex) {
             ex.printStackTrace(System.err);
         }
     }
@@ -257,6 +277,7 @@ public class MainUIController implements Initializable {
         }
     }
 
+    @FXML
     private void getLoginCredentials() {
         Stage loginStage = new Stage();
         loginStage.setTitle("Login to MySQL");
@@ -289,6 +310,16 @@ public class MainUIController implements Initializable {
 
         TextField urlTextField = new TextField();
         grid.add(urlTextField, 1, 3);
+        
+        if(!URL.isEmpty()){
+            urlTextField.setText(URL);
+        }
+        if(!USERNAME.isEmpty()){
+            userTextField.setText(USERNAME);
+        }
+        if(!PASSWORD.isEmpty()){
+            pwBox.setText(PASSWORD);
+        }
 
         Button btn = new Button("Sign in");
         HBox hbBtn = new HBox(10);
@@ -334,6 +365,14 @@ public class MainUIController implements Initializable {
                 writer.close();
             } catch (Exception e) {
             }
+        }
+    }
+
+    void disconnectFromDB() {
+        try {
+            con.close();
+        } catch (SQLException ex) {
+
         }
     }
 
