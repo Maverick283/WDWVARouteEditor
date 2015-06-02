@@ -6,9 +6,11 @@
 package worldwide.airline.route.editor;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import javafx.stage.FileChooser;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.Connection;
@@ -71,10 +73,7 @@ public class MainUIController implements Initializable {
     public Button createDownloadButton(int x, int y) {
         downloadButton = new Button("Access DB");
         downloadButton.setOnAction((final ActionEvent e) -> {
-            String URL = "URL";
-            String username = "USER";
-            String password = "PASS";
-            connectToDB(URL, username, password);
+            connectToDB();
             //getAirplanes();
         });
         downloadButton.setLayoutX(x);
@@ -82,10 +81,10 @@ public class MainUIController implements Initializable {
         return downloadButton;
     }
 
-    public void connectToDB(String URL, String username, String password) {
+    public void connectToDB() {
         try {
             Class.forName("com.mysql.jdbc.Driver");
-            Connection conn = DriverManager.getConnection(URL, username, password);
+            Connection conn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
             System.out.println("Creating statement...");
             Statement stmt = conn.createStatement();
             String sql;
@@ -174,12 +173,9 @@ public class MainUIController implements Initializable {
     }
 
     private void checkAllRoutesForAircraftCompatibility(ArrayList<Aircraft> aircraftList) {
-        String URL = "URL";
-        String username = "USER";
-        String password = "PASS";
         try {
             Class.forName("com.mysql.jdbc.Driver");
-            Connection conn = DriverManager.getConnection(URL, username, password);
+            Connection conn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
             System.out.println("Creating statement...");
             Statement stmt = conn.createStatement();
             String sql;
@@ -321,25 +317,29 @@ public class MainUIController implements Initializable {
     }
 
     private void checkLogin() {
-        String tempPath = calc.getTempPath();
+        String tempPath = calc.getTempPath()+"/WDWVALogin.txt";
         try (BufferedReader br = new BufferedReader(new FileReader(tempPath))) {
             String line;
             while ((line = br.readLine()) != null) {
-                String rep = line.substring(0, line.indexOf("=") + 1).trim();
-                String value = line.substring(line.indexOf("=") + 1, line.length());
+                String rep = line.substring(0, line.indexOf("=") - 1).trim();
+                String value = line.substring(line.indexOf("=") + 1, line.length()).trim();
                 switch (rep) {
                     case "URL":
                         URL = value;
+                        System.out.println("URL = " + URL);
                         break;
                     case "USERNAME":
                         USERNAME = value;
+                        System.out.println("USERNAME = " + USERNAME);
                         break;
                     case "PASSWORD":
                         PASSWORD = value;
+                        System.out.println("PASSWORD = " + PASSWORD);
                         break;
                     default:
                         System.out.println("Login data not complete...");
-                        getLoginCredentials();
+                        break;
+                        
                 }
             }
         } catch (IOException e) {
@@ -394,11 +394,38 @@ public class MainUIController implements Initializable {
                 USERNAME = userTextField.getText();
                 PASSWORD = pwBox.getText();
                 loginStage.close();
+                saveLoginData();
             }
+
         });
 
         Scene scene = new Scene(grid, 300, 275);
         loginStage.setScene(scene);
+    }
+
+    private void saveLoginData() {
+        BufferedWriter writer = null;
+        try {
+            File logFile = new File(calc.getTempPath()+"/WDWVALogin.txt");
+
+            // This will output the full path where the file will be written to...
+            System.out.println(logFile.getCanonicalPath());
+
+            writer = new BufferedWriter(new FileWriter(logFile));
+            writer.write("URL = " + URL);
+            writer.newLine();
+            writer.write("USERNAME = " + USERNAME );
+            writer.newLine();
+            writer.write("PASSWORD = " + PASSWORD );
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                // Close the writer regardless of what happens...
+                writer.close();
+            } catch (Exception e) {
+            }
+        }
     }
 
 }
