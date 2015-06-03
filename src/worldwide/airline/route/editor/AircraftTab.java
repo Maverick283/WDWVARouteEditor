@@ -9,9 +9,11 @@ import java.util.ArrayList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
+import org.omg.CORBA.INITIALIZE;
 import sql.Aircraft;
 
 /**
@@ -70,8 +72,26 @@ public class AircraftTab {
     }
 
     private void displayByID(Aircraft aircraft) {
-        aircraft.getId();
         idLabel.setText(String.valueOf(aircraft.getId()));
+        icaoLabel.setText(String.valueOf(aircraft.getIcao()));
+        nameLabel.setText(String.valueOf(aircraft.getName()));
+        fullnameLabel.setText(String.valueOf(aircraft.getFullname()));
+        registrationLabel.setText(String.valueOf(aircraft.getRegistration()));
+        downloadlinkLabel.setText(String.valueOf(aircraft.getDownloadlink()));
+        imagelinkLabel.setText(String.valueOf(aircraft.getImagelink()));
+        rangeLabel.setText(aircraft.getRange());
+        weightLabel.setText(String.valueOf(aircraft.getWeight()));
+        cruiseLabel.setText(String.valueOf(aircraft.getCruise()));
+        maxpaxLabel.setText(String.valueOf(aircraft.getMaxpax()));
+        maxcargoLabel.setText(String.valueOf(aircraft.getMaxcargo()));
+        minrankLabel.setText(String.valueOf(aircraft.getMinrank()));
+        ranklevelLabel.setText(String.valueOf(aircraft.getRanklevel()));
+        //aircraftImage.setImage(String.valueOf(aircraft.getImage()));
+        initEnabled(aircraft.getEnabled() == 1);
+    }
+
+    private void initEnabled(boolean isEnabled) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }
