@@ -30,6 +30,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
+import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
@@ -108,6 +109,10 @@ public class MainUIController implements Initializable {
     private VBox listBox;
     
     ArrayList<Aircraft> aircraftList;
+    @FXML
+    private Slider enabledSlider;
+    @FXML
+    private Button toggleAircraftEnabledButton;
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -371,7 +376,7 @@ public class MainUIController implements Initializable {
             writer.newLine();
             writer.write("PASSWORD = " + PASSWORD);
         } catch (Exception e) {
-            e.printStackTrace();
+            e.printStackTrace(System.err);
         } finally {
             try {
                 // Close the writer regardless of what happens...
@@ -387,6 +392,10 @@ public class MainUIController implements Initializable {
         } catch (SQLException | NullPointerException ex) {
 
         }
+    }
+
+    @FXML
+    private void enableAircraftToggled(ActionEvent event) {
     }
 
 }

@@ -72,7 +72,12 @@
                                     <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="14">
                                        <children>
                                           <Label text="Yes" />
-                                          <Slider maxWidth="-Infinity" minWidth="-Infinity" prefHeight="14.0" prefWidth="30.0" />
+                                          <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="14.0" prefWidth="30.0">
+                                             <children>
+                                                <Slider fx:id="enabledSlider" blockIncrement="1.0" layoutX="3.0" layoutY="1.0" max="1.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="14.0" prefWidth="30.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                                <Button fx:id="toggleAircraftEnabledButton" layoutX="38.0" layoutY="1.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#enableAircraftToggled" prefHeight="14.0" prefWidth="30.0" text="Button" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                             </children>
+                                          </AnchorPane>
                                           <Label text="No" />
                                        </children>
                                     </HBox>
