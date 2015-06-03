@@ -98,6 +98,8 @@ public class MainUIController implements Initializable {
     private Label loginStatusLabel;
     @FXML
     private Button changeLoginCredentialsButton;
+    @FXML
+    private Button refreshButton;
 
     AircraftTab aircraftTab;
     @FXML
@@ -197,8 +199,9 @@ public class MainUIController implements Initializable {
             short enabled = rs.getShort("enabled");
 
             aircraftList.add(new Aircraft(id, icao, name, fullname, registration, downloadlink, imagelink, range, weight, cruise, maxpax, maxcargo, minrank, ranklevel, enabled));
-
+            
         }
+        aircraftTab.createList(aircraftList);
         checkAllRoutesForAircraftCompatibility(aircraftList);
 
         //STEP 6: Clean-up environment
@@ -381,7 +384,7 @@ public class MainUIController implements Initializable {
     void disconnectFromDB() {
         try {
             con.close();
-        } catch (SQLException ex) {
+        } catch (SQLException | NullPointerException ex) {
 
         }
     }
