@@ -272,5 +272,9 @@ public class Aircraft implements Serializable {
     public String toString() {
         return "worldwide.airline.route.editor.Aircraft[ id=" + id + " ]";
     }
+
+    public Object icaoLabel() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
     
 }
