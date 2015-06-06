@@ -55,6 +55,14 @@ public class Acarschat implements Serializable {
         this.id = id;
     }
 
+    public Acarschat(Integer id, Integer pilotid, String message, String time, String timestamp) {
+        this.id = id;
+        this.pilotid = pilotid;
+        this.message = message;
+        this.time = time;
+        this.timestamp = timestamp;
+    }
+
     public Integer getId() {
         return id;
     }

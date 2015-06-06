@@ -101,4 +101,8 @@ public class calc {
             }
         }
     }
+
+    static String convertToHex(int rgb) {
+        return Integer.toHexString(rgb);
+    }
 }

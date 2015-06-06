@@ -21,6 +21,7 @@
                            <children>
                               <Button fx:id="connectToDBButton" layoutX="26.0" layoutY="33.0" mnemonicParsing="false" onAction="#connectToDB" text="Connect to database" />
                               <Button fx:id="changeLoginCredentialsButton" layoutX="26.0" layoutY="69.0" mnemonicParsing="false" onAction="#getLoginCredentials" text="Change credentials" />
+                              <Label fx:id="connectingInfoLabel" layoutX="179.0" layoutY="37.0" text="Label" />
                            </children>
                         </AnchorPane>
                      </content>
@@ -29,12 +30,16 @@
                      <content>
                         <AnchorPane prefHeight="538.0" prefWidth="1000.0">
                            <children>
-                              <VBox fx:id="listBox" layoutX="35.0" layoutY="26.0" prefHeight="200.0" prefWidth="100.0" AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="500.0" AnchorPane.topAnchor="14.0" />
+                              <ScrollPane hbarPolicy="NEVER" layoutX="14.0" layoutY="14.0" prefHeight="486.0" prefViewportHeight="484.0" prefViewportWidth="486.0" prefWidth="488.0" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="14.0">
+                                 <content>
+                                    <VBox fx:id="listBox" layoutX="35.0" layoutY="26.0" prefHeight="200.0" prefWidth="100.0" AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="500.0" AnchorPane.topAnchor="14.0" />
+                                 </content>
+                              </ScrollPane>
                               <ImageView fx:id="aircraftImage" fitHeight="150.0" fitWidth="200.0" layoutX="773.0" layoutY="14.0" pickOnBounds="true" preserveRatio="true" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="14.0" />
-                              <GridPane layoutX="533.0" layoutY="23.0" prefHeight="446.0" prefWidth="252.0" AnchorPane.leftAnchor="533.0" AnchorPane.topAnchor="45.0">
+                              <GridPane layoutX="533.0" layoutY="23.0" prefHeight="446.0" prefWidth="372.0" AnchorPane.leftAnchor="533.0" AnchorPane.topAnchor="45.0">
                                 <columnConstraints>
-                                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="181.0" minWidth="10.0" prefWidth="109.0" />
+                                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="274.0" minWidth="10.0" prefWidth="263.0" />
                                 </columnConstraints>
                                 <rowConstraints>
                                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -75,7 +80,7 @@
                                           <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="14.0" prefWidth="30.0">
                                              <children>
                                                 <Slider fx:id="enabledSlider" blockIncrement="1.0" layoutX="3.0" layoutY="1.0" max="1.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="14.0" prefWidth="30.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                                                <Button fx:id="toggleAircraftEnabledButton" layoutX="38.0" layoutY="1.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#enableAircraftToggled" prefHeight="14.0" prefWidth="30.0" text="Button" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                                <Button fx:id="toggleAircraftEnabledButton" layoutX="38.0" layoutY="1.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#enableAircraftToggled" prefHeight="14.0" prefWidth="30.0" text="Button" textFill="TRANSPARENT" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                              </children>
                                           </AnchorPane>
                                           <Label text="No" />
@@ -116,7 +121,7 @@
                      <content>
                         <AnchorPane prefHeight="538.0" prefWidth="1000.0">
                            <children>
-                              <TableView editable="true" layoutX="14.0" layoutY="95.0" prefHeight="418.0" prefWidth="980.0" AnchorPane.leftAnchor="6.0" AnchorPane.rightAnchor="6.0">
+                              <TableView fx:id="problematicRouteTable" editable="true" layoutX="14.0" layoutY="95.0" prefHeight="418.0" prefWidth="980.0" AnchorPane.leftAnchor="6.0" AnchorPane.rightAnchor="6.0">
                                  <columns>
                                     <TableColumn prefWidth="40.0" text="ID" />
                                     <TableColumn prefWidth="40.0" text="CODE" />
@@ -141,7 +146,16 @@
                               </TableView>
                               <Button layoutX="100.0" layoutY="37.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="84.0" text="Update DB" />
                               <Button layoutX="26.0" layoutY="37.0" mnemonicParsing="false" text="Refresh" />
-                              <ScrollBar layoutX="7.0" layoutY="506.0" prefHeight="14.0" prefWidth="986.0" AnchorPane.leftAnchor="6.0" AnchorPane.rightAnchor="6.0" />
+                           </children>
+                        </AnchorPane>
+                     </content>
+                  </Tab>
+                  <Tab text="Chat History">
+                     <content>
+                        <AnchorPane prefHeight="538.0" prefWidth="1000.0">
+                           <children>
+                              <ListView fx:id="messageList" layoutX="14.0" layoutY="41.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="41.0" />
+                              <CheckBox fx:id="showSystemMessagsCheckBox" layoutX="802.0" layoutY="14.0" mnemonicParsing="false" onAction="#refreshChatHistory" text="Show System Messages" />
                            </children>
                         </AnchorPane>
                      </content>

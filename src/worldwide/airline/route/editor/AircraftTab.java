@@ -7,13 +7,14 @@ package worldwide.airline.route.editor;
 
 import java.util.ArrayList;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.Slider;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import org.omg.CORBA.INITIALIZE;
 import sql.Aircraft;
 
 /**
@@ -38,10 +39,15 @@ public class AircraftTab {
     private final Label ranklevelLabel;
     private final ImageView aircraftImage;
     private final VBox listBox;
+    private final Button toggleAircraftEnabledButton;
+    private final Slider enabledSlider;
     private final MainUIController father;
     private ArrayList<Aircraft> aircraftList;
+    private boolean editModeEnabled;
 
-    AircraftTab(MainUIController father, VBox listBox, Label idLabel, Label icaoLabel, Label nameLabel, Label fullnameLabel, Label registrationLabel, Label downloadlinkLabel, Label imagelinkLabel, Label rangeLabel, Label weightLabel, Label cruiseLabel, Label maxpaxLabel, Label maxcargoLabel, Label minrankLabel, Label ranklevelLabel, ImageView aircraftImage) {
+    HBox currentlyDisplayedHBox;
+
+    AircraftTab(MainUIController father, VBox listBox, Label idLabel, Label icaoLabel, Label nameLabel, Label fullnameLabel, Label registrationLabel, Label downloadlinkLabel, Label imagelinkLabel, Label rangeLabel, Label weightLabel, Label cruiseLabel, Label maxpaxLabel, Label maxcargoLabel, Label minrankLabel, Label ranklevelLabel, ImageView aircraftImage, Slider enabledSlider, Button toggleAircraftEnabledButton) {
         this.father = father;
         this.listBox = listBox;
         this.idLabel = idLabel;
@@ -59,15 +65,30 @@ public class AircraftTab {
         this.minrankLabel = minrankLabel;
         this.ranklevelLabel = ranklevelLabel;
         this.aircraftImage = aircraftImage;
+        this.enabledSlider = enabledSlider;
+        this.toggleAircraftEnabledButton = toggleAircraftEnabledButton;
+        toggleAircraftEnabledButton.setStyle(STYLE.setBackgroundTransparent());
+
+        editModeEnabled = false;
+        currentlyDisplayedHBox = new HBox();
     }
 
     public void createList(ArrayList<Aircraft> aircraftList) {
         for (Aircraft aircraft : aircraftList) {
+            HBox element = new HBox();
+            element.setMinWidth(480);
             Label name = new Label(aircraft.getName());
-            name.setOnMouseClicked((MouseEvent event) -> {
+            name.setMinWidth(120);
+            Label registration = new Label(aircraft.getRegistration());
+            registration.setMinWidth(60);
+            element.getChildren().addAll(name, registration);
+            element.setOnMouseClicked((MouseEvent event) -> {
+                currentlyDisplayedHBox.setStyle(STYLE.setBackgroundTransparent());
+                currentlyDisplayedHBox = element;
+                currentlyDisplayedHBox.setStyle(STYLE.setBackground("78B7FF"));
                 displayByID(aircraft);
             });
-            listBox.getChildren().add(name);
+            listBox.getChildren().add(element);
         }
     }
 
@@ -86,12 +107,34 @@ public class AircraftTab {
         maxcargoLabel.setText(String.valueOf(aircraft.getMaxcargo()));
         minrankLabel.setText(String.valueOf(aircraft.getMinrank()));
         ranklevelLabel.setText(String.valueOf(aircraft.getRanklevel()));
-        //aircraftImage.setImage(String.valueOf(aircraft.getImage()));
+        aircraftImage.setImage(aircraft.getImage());
         initEnabled(aircraft.getEnabled() == 1);
     }
 
     private void initEnabled(boolean isEnabled) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        setSliderValue(isEnabled);
+    }
+
+    void enableAircraftToggled(ActionEvent event) {
+        if (editModeEnabled) {
+            if (getSliderValue()) {
+                enabledSlider.setValue(1);
+            } else {
+                enabledSlider.setValue(0);
+            }
+        }
+    }
+
+    void setSliderValue(boolean value) {
+        if (value) {
+            enabledSlider.setValue(0);
+        } else {
+            enabledSlider.setValue(1);
+        }
+    }
+
+    boolean getSliderValue() {
+        return enabledSlider.getValue() == 0.0;
     }
 
 }

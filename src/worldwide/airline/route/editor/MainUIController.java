@@ -20,6 +20,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -28,9 +29,13 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
 import javafx.scene.control.PasswordField;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Slider;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
@@ -41,7 +46,9 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import sql.Acarschat;
 import sql.Aircraft;
+import sql.Schedules;
 
 /**
  *
@@ -99,40 +106,71 @@ public class MainUIController implements Initializable {
     private Label loginStatusLabel;
     @FXML
     private Button changeLoginCredentialsButton;
-    @FXML
-    private Button refreshButton;
 
     AircraftTab aircraftTab;
+    ChatTab chatTab;
+    ProbelmaticRouteTab probelmaticRouteTab;
     @FXML
     private ImageView aircraftImage;
     @FXML
     private VBox listBox;
-    
+
     ArrayList<Aircraft> aircraftList;
     @FXML
     private Slider enabledSlider;
     @FXML
     private Button toggleAircraftEnabledButton;
-    
+    @FXML
+    private Label connectingInfoLabel;
+    @FXML
+    private TableView<Schedules> problematicRouteTable;
+    private ArrayList<Acarschat> chatList;
+    @FXML
+    private ListView<?> messageList;
+    @FXML
+    private CheckBox showSystemMessagsCheckBox;
+    private ArrayList<Schedules> faultySchedulesList;
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         errorWindow = new ErrorMessageController(this);
         placeSideLabel(14, 80);
+        setConnectingInfoText("");
         checkLogin();
-        aircraftTab = new AircraftTab(this, listBox,idLabel,icaoLabel,nameLabel,fullnameLabel,registrationLabel,downloadlinkLabel,imagelinkLabel,rangeLabel,weightLabel,cruiseLabel,maxpaxLabel,maxcargoLabel,minrankLabel,ranklevelLabel,aircraftImage);
+        aircraftTab = new AircraftTab(this, listBox, idLabel, icaoLabel, nameLabel, fullnameLabel, registrationLabel, downloadlinkLabel, imagelinkLabel, rangeLabel, weightLabel, cruiseLabel, maxpaxLabel, maxcargoLabel, minrankLabel, ranklevelLabel, aircraftImage, enabledSlider, toggleAircraftEnabledButton);
+        probelmaticRouteTab = new ProbelmaticRouteTab(problematicRouteTable);
+        chatTab = new ChatTab(messageList,showSystemMessagsCheckBox);
     }
 
     @FXML
     public void connectToDB() {
+        setConnectingInfoText("Opening Connection... This will take a bit...");
         try {
             Class.forName("com.mysql.jdbc.Driver");
             con = DriverManager.getConnection(URL, USERNAME, PASSWORD);
             loginStatusLabel.setText("Connected as " + USERNAME);
-            getAircrafts();
+            Platform.runLater(() -> {
+                try {
+                    getAircrafts();
+                    getChat();
+                } catch (SQLException ex) {
+                    setConnectingInfoText("Error!");
+                    ex.printStackTrace(System.err);
+                }
+            });
+            setConnectingInfoText("Connected");
 
         } catch (SQLException | ClassNotFoundException ex) {
+            setConnectingInfoText("Error!");
             ex.printStackTrace(System.err);
         }
+    }
+
+    public void setConnectingInfoText(String text) {
+
+        Platform.runLater(() -> {
+            connectingInfoLabel.setText(text);
+        });
     }
 
     private void openFileChooser() {
@@ -198,13 +236,13 @@ public class MainUIController implements Initializable {
             String weight = rs.getString("weight");
             String cruise = rs.getString("cruise");
             float maxpax = rs.getFloat("maxpax");
-            float maxcargo = rs.getFloat("maxcargo");          
-            int minrank = rs.getInt("minrank");          
+            float maxcargo = rs.getFloat("maxcargo");
+            int minrank = rs.getInt("minrank");
             int ranklevel = rs.getInt("ranklevel");
             short enabled = rs.getShort("enabled");
 
             aircraftList.add(new Aircraft(id, icao, name, fullname, registration, downloadlink, imagelink, range, weight, cruise, maxpax, maxcargo, minrank, ranklevel, enabled));
-            
+
         }
         aircraftTab.createList(aircraftList);
         checkAllRoutesForAircraftCompatibility(aircraftList);
@@ -220,6 +258,7 @@ public class MainUIController implements Initializable {
             String sql;
             sql = "SELECT * FROM schedules";
             ResultSet rs = stmt.executeQuery(sql);
+            faultySchedulesList = new ArrayList();
             //STEP 5: Extract data from result set
             while (rs.next()) {
                 //Retrieve Data                
@@ -245,6 +284,28 @@ public class MainUIController implements Initializable {
                     //compare aircraft range to route distance
                     if (rangeInt < distanceInt) {
                         //print message if needed
+                        String flightnum = rs.getString("flightnum");
+                        String depicao = rs.getString("depicao");
+                        String arricao = rs.getString("arricao");
+                        String route = rs.getString("route");
+                        String routeDetails  = rs.getString("route_details");
+                        String aircraft = rs.getString("aircraft");
+                        String flightlevel = rs.getString("flightlevel");
+                        String deptime = rs.getString("deptime");
+                        String arrtime = rs.getString("arrtime");
+                        float flighttime = rs.getFloat("flighttime");
+                        String daysofweek = rs.getString("daysofweek");
+                        float price = rs.getFloat("price");
+                        String flighttype = rs.getString("flighttype");
+                        int timesflown = rs.getInt("timesflown");
+                        String notes = rs.getString("notes");
+                        int enabled = rs.getInt("enabled");
+                        int bidid = rs.getInt("bidid");
+                        
+                                
+                        
+                        Schedules schedule = new Schedules(id, flightnum, depicao, arricao, route, routeDetails, aircraft, flightlevel, distanceInt, deptime, arrtime, flighttime, daysofweek, price, flighttype, timesflown, notes, enabled, bidid);
+                        faultySchedulesList.add(schedule);
                         System.out.print("Route distance: " + String.valueOf(distanceInt) + "nm  \t" + "Aircraft type: " + aircraftNAME + "  \tRange of aircraft: " + String.valueOf(rangeInt) + "nm\t");
                         System.out.println("Route with the ID " + id + " has a Problem!");
                     }
@@ -254,6 +315,7 @@ public class MainUIController implements Initializable {
                 }
 
             }
+            probelmaticRouteTab.createList(faultySchedulesList);
 
             //STEP 6: Clean-up environment
             rs.close();
@@ -328,14 +390,14 @@ public class MainUIController implements Initializable {
 
         TextField urlTextField = new TextField();
         grid.add(urlTextField, 1, 3);
-        
-        if(!URL.isEmpty()){
+
+        if (!URL.isEmpty()) {
             urlTextField.setText(URL);
         }
-        if(!USERNAME.isEmpty()){
+        if (!USERNAME.isEmpty()) {
             userTextField.setText(USERNAME);
         }
-        if(!PASSWORD.isEmpty()){
+        if (!PASSWORD.isEmpty()) {
             pwBox.setText(PASSWORD);
         }
 
@@ -396,6 +458,34 @@ public class MainUIController implements Initializable {
 
     @FXML
     private void enableAircraftToggled(ActionEvent event) {
+        aircraftTab.enableAircraftToggled(event);
+    }
+
+    private void getChat() throws SQLException {
+        Statement stmt = con.createStatement();
+        String sql;
+        sql = "SELECT * FROM acarschat";
+        ResultSet rs = stmt.executeQuery(sql);
+
+        //STEP 5: Extract data from result set
+        chatList = new ArrayList();
+        while (rs.next()) {
+            int id = rs.getInt("id");
+            int pilotid = rs.getInt("pilotid");
+            String message = rs.getString("message");
+            String time = rs.getString("time");
+            String timestamp = rs.getString("timestamp");
+            
+            Acarschat chatMessage = new Acarschat(id, pilotid, message, time, timestamp);
+            chatList.add(chatMessage);
+            
+        }
+        chatTab.createChatHistory(chatList);
+    }
+
+    @FXML
+    private void refreshChatHistory(ActionEvent event) {
+        chatTab.refreshChatHistory(event);
     }
 
 }

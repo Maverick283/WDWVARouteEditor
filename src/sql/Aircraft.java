@@ -6,6 +6,7 @@
 package sql;
 
 import java.io.Serializable;
+import javafx.scene.image.Image;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -41,6 +42,7 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "Aircraft.findByRanklevel", query = "SELECT a FROM Aircraft a WHERE a.ranklevel = :ranklevel"),
     @NamedQuery(name = "Aircraft.findByEnabled", query = "SELECT a FROM Aircraft a WHERE a.enabled = :enabled")})
 public class Aircraft implements Serializable {
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -91,6 +93,7 @@ public class Aircraft implements Serializable {
     @Basic(optional = false)
     @Column(name = "enabled")
     private short enabled;
+    private Image thumbnail;
 
     public Aircraft() {
     }
@@ -98,15 +101,15 @@ public class Aircraft implements Serializable {
     public Aircraft(Integer id) {
         this.id = id;
     }
-    
-    public Aircraft(Integer id, String range){
-        this.id= id;
-        this.range= range;
+
+    public Aircraft(Integer id, String range) {
+        this.id = id;
+        this.range = range;
     }
-    
-    public Aircraft(Integer id, String range,  String name){
-        this.id= id;
-        this.range= range;
+
+    public Aircraft(Integer id, String range, String name) {
+        this.id = id;
+        this.range = range;
         this.name = name;
     }
 
@@ -126,6 +129,14 @@ public class Aircraft implements Serializable {
         this.minrank = minrank;
         this.ranklevel = ranklevel;
         this.enabled = enabled;
+        /*  creates a new picture for each aircraft... This as it is now takes a lot of time...
+         try{
+            
+         this.thumbnail = new Image(imagelink);
+         }
+         catch(Exception e){
+         e.printStackTrace(System.err);
+         }*/
     }
 
     public Integer getId() {
@@ -276,5 +287,9 @@ public class Aircraft implements Serializable {
     public Object icaoLabel() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
+
+    public Image getImage() {
+        return thumbnail;
+    }
+
 }
