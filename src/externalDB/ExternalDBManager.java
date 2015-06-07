@@ -87,6 +87,13 @@ public class ExternalDBManager {
              Tz database time zone	Timezone in "tz" (Olson) format, eg. "America/Los_Angeles".
              */
             while ((line = br.readLine()) != null) {
+                //Due to bad Database management some airports have to be hard coded here... :(
+                if(line.substring(0, 4).equalsIgnoreCase("5881")){                    
+                    line = line.replace("\"Angaha, Niuafo'ou Island\"", "\"Angaha Niuafo'ou Island\"");
+                }
+                if(line.substring(0, 4).equalsIgnoreCase("5675")){                    
+                    line = line.replace("\"Sao Filipe, Fogo Island\"", "\"Sao Filipe Fogo Island\"");
+                }
                 String[] entries = line.split(",");
                 Airports instance = new Airports(entries);
                 airportList.add(instance);
