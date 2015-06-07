@@ -11,8 +11,24 @@ package externalDB;
  */
 public class Airlines {
 
+    String airlineID;
+    String name;
+    String alias;
+    String iATA;
+    String iCAO;
+    String callsign;
+    String country;
+    boolean active;
+    
     Airlines(String[] entries) {
-        System.out.println("Unsupported Method: Airlines at externalDB.Airlines"); //To change body of generated methods, choose Tools | Templates.
+        airlineID = entries[0];
+        name = entries[1];
+        alias = entries[2];
+        iATA= entries[3];
+        iCAO = entries[4];
+        callsign = entries[5];
+        country = entries[6];
+        active = entries[7].equalsIgnoreCase("Y");
     }
     
 }
