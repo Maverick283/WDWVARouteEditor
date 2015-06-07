@@ -156,7 +156,7 @@ public class MainUIController implements Initializable {
         String AIRPORTS = calc.getTempPath() + "/airports.dat";
         externalDB = new ExternalDBManager(this, ROUTES, AIRPORTS, AIRLINES);
         aircraftTab = new AircraftTab(this, listBox, idLabel, icaoLabel, nameLabel, fullnameLabel, registrationLabel, downloadlinkLabel, imagelinkLabel, rangeLabel, weightLabel, cruiseLabel, maxpaxLabel, maxcargoLabel, minrankLabel, ranklevelLabel, aircraftImage, enabledSlider, toggleAircraftEnabledButton);
-        probelmaticRouteTab = new ProbelmaticRouteTab(problematicRouteTable);
+        probelmaticRouteTab = new ProbelmaticRouteTab(problematicRouteTable,this);
         chatTab = new ChatTab(messageList, showSystemMessagsCheckBox);
     }
 
