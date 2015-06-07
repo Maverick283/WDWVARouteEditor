@@ -49,4 +49,31 @@ public class Routes {
         this.equipment = equipment;
     }
 
+    public String getAirlineName(){
+        return airlineName;
+    }
+    public int getAirlineID(){
+        return airlineID;
+    }
+    public String getSourceAirport(){
+        return sourceAirport;
+    }
+    public int getSourceAirportID(){
+        return sourceAirportID;
+    }
+    public String getDestinationAirport(){
+        return destinationAirport;
+    }
+    public int getDestinationAirportID(){
+        return destinationAirportID;
+    }
+    public boolean getCodeshare(){
+        return codeshare;
+    }
+    public int getStops(){
+        return stops;
+    }
+    public String[] getEquipment(){
+        return equipment;
+    }
 }
