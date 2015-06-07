@@ -8,9 +8,13 @@ package worldwide.airline.route.editor;
 import java.util.ArrayList;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableColumn.CellEditEvent;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.util.StringConverter;
 import sql.Schedules;
 
 /**
@@ -44,6 +48,7 @@ public class ProbelmaticRouteTab {
 
     ProbelmaticRouteTab(TableView<Schedules> problematicRouteTable, MainUIController father) {
         this.problematicRouteTable = problematicRouteTable;
+        problematicRouteTable.setEditable(true);
         id = problematicRouteTable.getColumns().get(0);
         code = problematicRouteTable.getColumns().get(1);
         flightnum = problematicRouteTable.getColumns().get(2);
@@ -64,12 +69,27 @@ public class ProbelmaticRouteTab {
         notes = problematicRouteTable.getColumns().get(17);
         enabled = problematicRouteTable.getColumns().get(18);
         issue = problematicRouteTable.getColumns().get(19);
-        
+
+        flightnum.setCellFactory(TextFieldTableCell.forTableColumn());
+        flightnum.setOnEditCommit(
+                new EventHandler<CellEditEvent<Schedules, String>>() {
+                    @Override
+                    public void handle(CellEditEvent<Schedules, String> t) {
+                        Schedules edited = (Schedules) t.getTableView().getItems().get(t.getTablePosition().getRow());
+                        int editedID = edited.getId();
+                        String flightnum = t.getNewValue();
+                        edited.setFlightnum(flightnum);
+                        father.submitQuery(" UPDATE schedules SET flightnum = " + flightnum + " WHERE id = " + String.valueOf(editedID) + "; ");
+                        
+                    }
+                }
+        );
+
         this.father = father;
     }
 
     void createList(ArrayList<Schedules> faultySchedulesList) {
-        id.setCellValueFactory(new PropertyValueFactory<Schedules, String>("id"));
+        id.setCellValueFactory(new PropertyValueFactory<Schedules, Integer>("id"));
         code.setCellValueFactory(new PropertyValueFactory<Schedules, String>("code"));
         flightnum.setCellValueFactory(new PropertyValueFactory<Schedules, String>("flightnum"));
         depicao.setCellValueFactory(new PropertyValueFactory<Schedules, String>("depicao"));

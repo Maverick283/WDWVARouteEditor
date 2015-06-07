@@ -24,6 +24,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -573,7 +575,7 @@ public class MainUIController implements Initializable {
             Statement statement = con.createStatement();
             // Result set get the result of the SQL query
             PreparedStatement preparedStatement = con.prepareStatement(dbQueryTextArea.getText());
-            preparedStatement.executeQuery();
+            preparedStatement.execute();
             
             preparedStatement.close();
             statement.close();
@@ -581,6 +583,17 @@ public class MainUIController implements Initializable {
             e.printStackTrace(System.err);
         } finally {
             ;
+        }
+    }
+
+    void submitQuery(String sql) {
+        try {
+            Statement stat = con.createStatement();
+            stat.executeUpdate(sql);
+            System.out.println(sql);
+            stat.close();
+        } catch (SQLException ex) {
+            ex.printStackTrace(System.err);
         }
     }
 

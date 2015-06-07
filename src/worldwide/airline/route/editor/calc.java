@@ -14,6 +14,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
+import javafx.util.StringConverter;
 
 /**
  *
@@ -138,5 +139,21 @@ public class calc {
         catch(Exception e){
             return false;
         }
+    }
+    
+    static StringConverter<Integer> getStringConverterToInt(){
+        StringConverter<Integer> toReturn = new StringConverter<Integer>() {
+
+            @Override
+            public String toString(Integer object) {
+                return String.valueOf(object);                
+            }
+
+            @Override
+            public Integer fromString(String string) {
+                return Integer.parseInt(string);
+            }
+        };
+        return toReturn;
     }
 }
