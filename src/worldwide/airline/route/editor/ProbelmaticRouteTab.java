@@ -39,8 +39,9 @@ public class ProbelmaticRouteTab {
     TableColumn timesflown;
     TableColumn notes;
     TableColumn enabled;
+    private final MainUIController father;
 
-    ProbelmaticRouteTab(TableView<Schedules> problematicRouteTable) {
+    ProbelmaticRouteTab(TableView<Schedules> problematicRouteTable, MainUIController father) {
         this.problematicRouteTable = problematicRouteTable;
         id = problematicRouteTable.getColumns().get(0);
         code = problematicRouteTable.getColumns().get(1);
@@ -61,6 +62,8 @@ public class ProbelmaticRouteTab {
         timesflown = problematicRouteTable.getColumns().get(16);
         notes = problematicRouteTable.getColumns().get(17);
         enabled = problematicRouteTable.getColumns().get(18);
+        
+        this.father = father;
     }
 
     void createList(ArrayList<Schedules> faultySchedulesList) {
