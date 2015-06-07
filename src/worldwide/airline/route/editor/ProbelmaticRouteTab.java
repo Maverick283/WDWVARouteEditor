@@ -7,6 +7,7 @@ package worldwide.airline.route.editor;
 
 import java.util.ArrayList;
 import javafx.collections.FXCollections;
+import javafx.event.ActionEvent;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -83,6 +84,10 @@ public class ProbelmaticRouteTab {
         notes.setCellValueFactory(new PropertyValueFactory<Schedules, String>("notes"));
         enabled.setCellValueFactory(new PropertyValueFactory<Schedules, String>("enabled"));
         problematicRouteTable.setItems(FXCollections.observableArrayList(faultySchedulesList));
+    }
+
+    void refresh(ActionEvent event) {
+        System.out.println("Unsupported Method: refresh at worldwide.airline.route.editor.ProbelmaticRouteTab"); //To change body of generated methods, choose Tools | Templates.
     }
 
 }

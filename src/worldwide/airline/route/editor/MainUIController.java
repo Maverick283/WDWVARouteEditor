@@ -140,6 +140,8 @@ public class MainUIController implements Initializable {
     private TableView<?> externalDBAirportsTableView1;
     @FXML
     private TableView<?> externalDBAirlinesTableView;
+    @FXML
+    private Button problematicRoutesRefreshButton;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -515,6 +517,11 @@ public class MainUIController implements Initializable {
         calc.saveFile("http://sourceforge.net/p/openflights/code/HEAD/tree/openflights/data/airlines.dat?format=raw", AIRLINES);
         calc.saveFile("http://sourceforge.net/p/openflights/code/HEAD/tree/openflights/data/airports.dat?format=raw", AIRPORTS);
         externalDB.refreshData();
+    }
+
+    @FXML
+    private void refreshProblematicRoutes(ActionEvent event) {
+        probelmaticRouteTab.refresh(event);
     }
 
 }
