@@ -29,12 +29,16 @@ public class Routes {
         airlineName = entries[0];
         airlineID = entries[1];
         sourceAirport = entries[2];
-        sourceAirportID = Integer.parseInt(entries[3]);
+        sourceAirportID = parseInt(entries[3]);
         destinationAirport = entries[4];
-        destinationAirportID = Integer.parseInt(entries[5]);
+        destinationAirportID = parseInt(entries[5]);
         codeshare = entries[6].equalsIgnoreCase("Y");
         stops = Integer.parseInt(entries[7]);
-        equipment = entries[8].split(" ");
+        if (entries.length > 8) {
+            equipment = entries[8].split(" ");
+        } else {
+            equipment = new String[]{"NA"};
+        }
     }
 
     Routes(String airlineName, String airlineID, String sourceAirport, int sourceAirportID, String destinationAirport, int destinationAirportID, boolean codeshare, int stops, String[] equipment) {
@@ -95,5 +99,13 @@ public class Routes {
 
     void setAirline(Airlines airline) {
         this.airline = airline;
+    }
+
+    private int parseInt(String entry) {
+        try {
+            return Integer.parseInt(entry);
+        } catch (NumberFormatException e) {
+            return -1;
+        }
     }
 }
