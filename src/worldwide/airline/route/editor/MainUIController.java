@@ -164,7 +164,7 @@ public class MainUIController implements Initializable {
         probelmaticRouteTab = new ProbelmaticRouteTab(problematicRouteTable, this);
         chatTab = new ChatTab(messageList, showSystemMessagsCheckBox);
         externalDBTab = new ExternalDBTab(this, externalDB.getRoutes(), externalDB.getAirports(), externalDB.getAirlines(), externalDBRoutesTableView, externalDBAirlinesTableView, externalDBAirportsTableView);
-        
+
         allSchedulesList = new ArrayList<Schedules>();
     }
 
@@ -185,6 +185,13 @@ public class MainUIController implements Initializable {
                 }
             });
             setConnectingInfoText("Connected");
+            connectToDBButton.setText("Disconnect");
+            connectToDBButton.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent e) {
+                    disconnectFromDB();
+                }
+            });
 
         } catch (SQLException | ClassNotFoundException ex) {
             setConnectingInfoText("Error!");
@@ -309,7 +316,7 @@ public class MainUIController implements Initializable {
                 String notes = rs.getString("notes");
                 int enabled = rs.getInt("enabled");
                 int bidid = rs.getInt("bidid");
-                
+
                 Schedules schedule = new Schedules(id, flightnum, depicao, arricao, route, routeDetails, aircraft, flightlevel, price, deptime, arrtime, flighttime, daysofweek, price, flighttype, timesflown, notes, enabled, bidid);
                 String aircraftNAME = aircraftList.get(aircraftID - 1).getName();
                 //Get Data to a string that can be parsed
@@ -354,8 +361,7 @@ public class MainUIController implements Initializable {
                 nonExcistingSchedule.setIssue("Not a real route");
             }
             faultySchedulesList.addAll(nonExcistingSchedules);
-            
-            
+
             probelmaticRouteTab.createList(faultySchedulesList);
         } catch (SQLException ex) {
             ex.printStackTrace(System.err);
@@ -493,6 +499,15 @@ public class MainUIController implements Initializable {
     void disconnectFromDB() {
         try {
             con.close();
+            connectToDBButton.setText("Connect to databse");
+            connectingInfoLabel.setText("Disconnected");
+            loginStatusLabel.setText("Not looged in!");
+            connectToDBButton.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent e) {
+                    connectToDB();
+                }
+            });
         } catch (SQLException | NullPointerException ex) {
 
         }
