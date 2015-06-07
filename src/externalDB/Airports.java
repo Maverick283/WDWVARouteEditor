@@ -39,4 +39,41 @@ public class Airports {
         dbTimeZone = entries[11];
     }
     
+    public int getAirportID(){
+        return airportID;
+    }
+    public String getName(){
+        return name;
+    }
+    public String getCity(){
+        return city;
+    }
+    public String getCountry(){
+        return country;
+    }
+    public String getIATAFAA(){
+        return iATAFAA;
+    }
+    public String getICAO(){
+        return iCAO;
+    }
+    public double getLatitude(){
+        return latitude;
+    }
+    public double getLongtitude(){
+        return longitude;
+    }
+    public int getAltitude(){
+        return altitude;
+    }
+    public double getTimezone(){
+        return timezone;
+    }
+    public String getDST(){
+        return dST;
+    }
+    public String getDBTimeZone(){
+        return dbTimeZone;
+    }
+    
 }
