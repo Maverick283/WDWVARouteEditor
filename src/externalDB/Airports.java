@@ -26,11 +26,11 @@ public class Airports {
 
     Airports(String[] entries) {
         airportID = Integer.parseInt(entries[0]);
-        name = entries[1];
-        city = entries[2];
-        country = entries[3];
-        iATAFAA = entries[4];
-        iCAO = entries[5];
+        name = entries[1].replace("\"", "");
+        city = entries[2].replace("\"", "");
+        country = entries[3].replace("\"", "");
+        iATAFAA = entries[4].replace("\"", "");
+        iCAO = entries[5].replace("\"", "");
         if(entries[6].equalsIgnoreCase("\"GVNP\"")){
             System.out.println("Found it");
         }
@@ -63,7 +63,7 @@ public class Airports {
     public double getLatitude(){
         return latitude;
     }
-    public double getLongtitude(){
+    public double getLongitude(){
         return longitude;
     }
     public int getAltitude(){

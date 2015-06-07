@@ -5,7 +5,9 @@
  */
 package worldwide.airline.route.editor;
 
+import externalDB.Airports;
 import externalDB.ExternalDBManager;
+import externalDB.Routes;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import javafx.stage.FileChooser;
@@ -49,6 +51,7 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import sql.Acarschat;
 import sql.Aircraft;
+import sql.Airlines;
 import sql.Schedules;
 
 /**
@@ -110,6 +113,7 @@ public class MainUIController implements Initializable {
 
     AircraftTab aircraftTab;
     ChatTab chatTab;
+    ExternalDBTab externalDBTab;
     ProbelmaticRouteTab probelmaticRouteTab;
     @FXML
     private ImageView aircraftImage;
@@ -135,13 +139,13 @@ public class MainUIController implements Initializable {
     private Button refreshExternalDatabasesButton;
     private ExternalDBManager externalDB;
     @FXML
-    private TableView<?> externalDBRoutesTableView2;
-    @FXML
-    private TableView<?> externalDBAirportsTableView1;
-    @FXML
-    private TableView<?> externalDBAirlinesTableView;
+    private TableView<externalDB.Airlines> externalDBAirlinesTableView;
     @FXML
     private Button problematicRoutesRefreshButton;
+    @FXML
+    private TableView<Routes> externalDBRoutesTableView;
+    @FXML
+    private TableView<Airports> externalDBAirportsTableView;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -158,6 +162,7 @@ public class MainUIController implements Initializable {
         aircraftTab = new AircraftTab(this, listBox, idLabel, icaoLabel, nameLabel, fullnameLabel, registrationLabel, downloadlinkLabel, imagelinkLabel, rangeLabel, weightLabel, cruiseLabel, maxpaxLabel, maxcargoLabel, minrankLabel, ranklevelLabel, aircraftImage, enabledSlider, toggleAircraftEnabledButton);
         probelmaticRouteTab = new ProbelmaticRouteTab(problematicRouteTable,this);
         chatTab = new ChatTab(messageList, showSystemMessagsCheckBox);
+        externalDBTab = new ExternalDBTab(this,externalDB.getRoutes(), externalDB.getAirports(), externalDB.getAirlines(),externalDBRoutesTableView,externalDBAirlinesTableView,externalDBAirportsTableView);
     }
 
     @FXML
@@ -418,6 +423,7 @@ public class MainUIController implements Initializable {
                 pwBox.setText(PASSWORD);
             }
         } catch (NullPointerException e) {
+            System.out.println("User Credentials Fail!");
             e.printStackTrace(System.err);
         }
 

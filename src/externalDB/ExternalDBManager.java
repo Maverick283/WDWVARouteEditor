@@ -194,4 +194,16 @@ public class ExternalDBManager {
         }
         return false;
     }
+    
+    public ArrayList getRoutes(){
+        return routeList;
+    }
+    
+    public ArrayList getAirports(){
+        return airportList;
+    }
+    
+    public ArrayList getAirlines(){
+        return airlineList;
+    }
 }

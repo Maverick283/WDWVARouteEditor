@@ -20,6 +20,7 @@ public class Routes {
     boolean codeshare;
     int stops;
     String[] equipment;
+    String equipmentString;
 
     Airports depAirport;
     Airports arrAirport;
@@ -38,6 +39,10 @@ public class Routes {
             equipment = entries[8].split(" ");
         } else {
             equipment = new String[]{"NA"};
+        }
+        equipmentString = equipment[0];
+        for (int i = 1 ; i<equipment.length;i++) {
+            equipmentString = equipmentString + "," + equipment[i];
         }
     }
 
@@ -87,6 +92,10 @@ public class Routes {
 
     public String[] getEquipment() {
         return equipment;
+    }
+    
+    public String getEquipmentString(){
+        return equipmentString;
     }
 
     void setDepAirport(Airports airport) {

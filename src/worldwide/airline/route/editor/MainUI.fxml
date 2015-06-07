@@ -173,7 +173,7 @@
                               <content>
                                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                        <children>
-                                          <TableView fx:id="externalDBRoutesTableView2" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="14.0">
+                                          <TableView fx:id="externalDBRoutesTableView" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="14.0">
                                              <columns>
                                                 <TableColumn prefWidth="75.0" text="Airline" />
                                                 <TableColumn prefWidth="75.0" text="Airline ID" />
@@ -183,7 +183,7 @@
                                                 <TableColumn prefWidth="75.0" text="Destination Airp. ID" />
                                                 <TableColumn prefWidth="75.0" text="Codeshare" />
                                                 <TableColumn prefWidth="75.0" text="Stops" />
-                                                <TableColumn prefWidth="75.0" text="Equipment" />
+                                                <TableColumn prefWidth="114.0" text="Equipment" />
                                              </columns>
                                           </TableView>
                                        </children>
@@ -194,19 +194,20 @@
                               <content>
                                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                        <children>
-                                          <TableView fx:id="externalDBAirportsTableView1" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="14.0">
+                                          <TableView fx:id="externalDBAirportsTableView" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="14.0">
                                              <columns>
-                                                <TableColumn prefWidth="75.0" text="Airport ID" />
-                                                <TableColumn prefWidth="75.0" text="Name" />
-                                                <TableColumn prefWidth="75.0" text="Country" />
-                                                <TableColumn prefWidth="75.0" text="IATA/FAA" />
-                                                <TableColumn prefWidth="75.0" text="ICAO" />
-                                                <TableColumn prefWidth="75.0" text="Lat." />
-                                                <TableColumn prefWidth="75.0" text="Lon." />
+                                                <TableColumn prefWidth="65.0" text="Airport ID" />
+                                                <TableColumn prefWidth="111.0" text="Name" />
+                                                <TableColumn prefWidth="93.0" text="City" />
+                                                <TableColumn prefWidth="93.0" text="Country" />
+                                                <TableColumn minWidth="0.0" prefWidth="62.0" text="IATA/FAA" />
+                                                <TableColumn minWidth="0.0" prefWidth="42.0" text="ICAO" />
+                                                <TableColumn prefWidth="100.0" text="Lat." />
+                                                <TableColumn prefWidth="100.0" text="Lon." />
                                                 <TableColumn prefWidth="75.0" text="Altitude" />
-                                                <TableColumn prefWidth="75.0" text="Timezone" />
-                                                <TableColumn prefWidth="75.0" text="DST" />
-                                                <TableColumn prefWidth="75.0" text="DB Timezone" />
+                                                <TableColumn prefWidth="65.0" text="Timezone" />
+                                                <TableColumn prefWidth="49.0" text="DST" />
+                                                <TableColumn prefWidth="82.0" text="DB Timezone" />
                                              </columns>
                                           </TableView>
                                        </children>
@@ -219,14 +220,14 @@
                                        <children>
                                           <TableView fx:id="externalDBAirlinesTableView" layoutX="14.0" layoutY="14.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="14.0">
                                             <columns>
-                                              <TableColumn prefWidth="75.0" text="Airline ID" />
-                                              <TableColumn prefWidth="75.0" text="Name" />
-                                                <TableColumn prefWidth="75.0" text="Alias" />
-                                                <TableColumn prefWidth="75.0" text="IATA" />
-                                                <TableColumn prefWidth="75.0" text="ICAO" />
-                                                <TableColumn prefWidth="75.0" text="Callsign" />
-                                                <TableColumn prefWidth="75.0" text="Country" />
-                                                <TableColumn prefWidth="75.0" text="Active" />
+                                              <TableColumn prefWidth="69.0" text="Airline ID" />
+                                              <TableColumn prefWidth="158.0" text="Name" />
+                                                <TableColumn minWidth="0.0" prefWidth="49.0" text="Alias" />
+                                                <TableColumn minWidth="6.0" prefWidth="35.0" text="IATA" />
+                                                <TableColumn prefWidth="49.0" text="ICAO" />
+                                                <TableColumn prefWidth="139.0" text="Callsign" />
+                                                <TableColumn prefWidth="164.0" text="Country" />
+                                                <TableColumn prefWidth="46.0" text="Active" />
                                             </columns>
                                           </TableView>
                                        </children>

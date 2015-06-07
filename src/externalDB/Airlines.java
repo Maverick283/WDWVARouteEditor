@@ -22,12 +22,12 @@ public class Airlines {
     
     Airlines(String[] entries) {
         airlineID = entries[0];
-        name = entries[1];
-        alias = entries[2];
-        iATA= entries[3];
-        iCAO = entries[4];
-        callsign = entries[5];
-        country = entries[6];
+        name = entries[1].replace("\"", "");
+        alias = entries[2].replace("\"", "");
+        iATA= entries[3].replace("\"", "");
+        iCAO = entries[4].replace("\"", "");
+        callsign = entries[5].replace("\"", "");
+        country = entries[6].replace("\"", "");
         active = entries[7].equalsIgnoreCase("Y");
     }
     
