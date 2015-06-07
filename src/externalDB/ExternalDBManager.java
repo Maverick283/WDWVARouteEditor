@@ -18,7 +18,7 @@ import worldwide.airline.route.editor.MainUIController;
 public class ExternalDBManager {
 
     private final MainUIController father;
-    
+
     ArrayList<Airlines> airlineList;
     ArrayList<Airports> airportList;
     ArrayList<Routes> routeList;
@@ -34,16 +34,8 @@ public class ExternalDBManager {
         airlineList = new ArrayList<>();
         airportList = new ArrayList<>();
         routeList = new ArrayList<>();
-        try{
-            readExternalAirlinesData();
-            readExternalAirportsData();
-            readExternalRoutesData();
-        }
-        catch(Exception e){
-            e.printStackTrace(System.err);
-        }
         
-        coupleRoutes();
+        refreshData();
     }
 
     /**
@@ -128,8 +120,7 @@ public class ExternalDBManager {
     }
 
     private void coupleRoutes() {
-        for(int i = 0; i<routeList.size();i++){
-            Routes route = routeList.get(i);
+        for (Routes route : routeList) {
             int depAirportID = route.getSourceAirportID();
             int arrAirportID = route.getDestinationAirportID();
             String airlineID = route.getAirlineID();
@@ -138,8 +129,8 @@ public class ExternalDBManager {
             route.setAirline(findAirlineByID(airlineID));
         }
     }
-    
-    private Airports findAirportByID(int iD){
+
+    private Airports findAirportByID(int iD) {
         for (Airports airport : airportList) {
             if (airport.getAirportID() == iD) {
                 return airport;
@@ -147,13 +138,25 @@ public class ExternalDBManager {
         }
         return null;
     }
-    
-    private Airlines findAirlineByID(String iD){
+
+    private Airlines findAirlineByID(String iD) {
         for (Airlines airline : airlineList) {
             if (airline.getAirlineID().equalsIgnoreCase(iD)) {
                 return airline;
             }
         }
         return null;
+    }
+
+    public void refreshData() {
+        try {
+            readExternalAirlinesData();
+            readExternalAirportsData();
+            readExternalRoutesData();
+        } catch (Exception e) {
+            e.printStackTrace(System.err);
+        }
+
+        coupleRoutes();
     }
 }

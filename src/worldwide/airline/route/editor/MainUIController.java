@@ -142,7 +142,11 @@ public class MainUIController implements Initializable {
         placeSideLabel(14, 80);
         setConnectingInfoText("");
         checkLogin();
-        externalDB = new ExternalDBManager(this);
+
+        String ROUTES = calc.getTempPath() + "/routes.dat";
+        String AIRLINES = calc.getTempPath() + "/airlines.dat";
+        String AIRPORTS = calc.getTempPath() + "/airports.dat";
+        externalDB = new ExternalDBManager(this, ROUTES, AIRPORTS, AIRLINES);
         aircraftTab = new AircraftTab(this, listBox, idLabel, icaoLabel, nameLabel, fullnameLabel, registrationLabel, downloadlinkLabel, imagelinkLabel, rangeLabel, weightLabel, cruiseLabel, maxpaxLabel, maxcargoLabel, minrankLabel, ranklevelLabel, aircraftImage, enabledSlider, toggleAircraftEnabledButton);
         probelmaticRouteTab = new ProbelmaticRouteTab(problematicRouteTable);
         chatTab = new ChatTab(messageList, showSystemMessagsCheckBox);
@@ -504,11 +508,7 @@ public class MainUIController implements Initializable {
         calc.saveFile("http://sourceforge.net/p/openflights/code/HEAD/tree/openflights/data/routes.dat?format=raw", ROUTES);
         calc.saveFile("http://sourceforge.net/p/openflights/code/HEAD/tree/openflights/data/airlines.dat?format=raw", AIRLINES);
         calc.saveFile("http://sourceforge.net/p/openflights/code/HEAD/tree/openflights/data/airports.dat?format=raw", AIRPORTS);
-        externalDB.readExternalAirportsData(AIRPORTS);
-        externalDB.readExternalAirlinesData(AIRLINES);
-        externalDB.readExternalRoutesData(ROUTES);
+        externalDB.refreshData();
     }
-
-    
 
 }

@@ -12,7 +12,7 @@ package externalDB;
 public class Routes {
 
     String airlineName;
-    int airlineID;
+    String airlineID;
     String sourceAirport;
     int sourceAirportID;
     String destinationAirport;
@@ -20,14 +20,14 @@ public class Routes {
     boolean codeshare;
     int stops;
     String[] equipment;
-    
+
     Airports depAirport;
     Airports arrAirport;
     Airlines airline;
 
     Routes(String[] entries) {
         airlineName = entries[0];
-        airlineID = Integer.parseInt(entries[1]);
+        airlineID = entries[1];
         sourceAirport = entries[2];
         sourceAirportID = Integer.parseInt(entries[3]);
         destinationAirport = entries[4];
@@ -36,8 +36,8 @@ public class Routes {
         stops = Integer.parseInt(entries[7]);
         equipment = entries[8].split(" ");
     }
-    
-    Routes(String airlineName, int airlineID, String sourceAirport, int sourceAirportID, String destinationAirport, boolean codeshare, int stops, String[] equipment){
+
+    Routes(String airlineName, String airlineID, String sourceAirport, int sourceAirportID, String destinationAirport, int destinationAirportID, boolean codeshare, int stops, String[] equipment) {
         this.airlineName = airlineName;
         this.airlineID = airlineID;
         this.sourceAirport = sourceAirport;
@@ -49,31 +49,51 @@ public class Routes {
         this.equipment = equipment;
     }
 
-    public String getAirlineName(){
+    public String getAirlineName() {
         return airlineName;
     }
-    public int getAirlineID(){
+
+    public String getAirlineID() {
         return airlineID;
     }
-    public String getSourceAirport(){
+
+    public String getSourceAirport() {
         return sourceAirport;
     }
-    public int getSourceAirportID(){
+
+    public int getSourceAirportID() {
         return sourceAirportID;
     }
-    public String getDestinationAirport(){
+
+    public String getDestinationAirport() {
         return destinationAirport;
     }
-    public int getDestinationAirportID(){
+
+    public int getDestinationAirportID() {
         return destinationAirportID;
     }
-    public boolean getCodeshare(){
+
+    public boolean getCodeshare() {
         return codeshare;
     }
-    public int getStops(){
+
+    public int getStops() {
         return stops;
     }
-    public String[] getEquipment(){
+
+    public String[] getEquipment() {
         return equipment;
+    }
+
+    void setDepAirport(Airports airport) {
+        this.depAirport = airport;
+    }
+
+    void setArrAirport(Airports airport) {
+        this.arrAirport = airport;
+    }
+
+    void setAirline(Airlines airline) {
+        this.airline = airline;
     }
 }
