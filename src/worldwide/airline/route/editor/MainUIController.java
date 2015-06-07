@@ -5,6 +5,7 @@
  */
 package worldwide.airline.route.editor;
 
+import externalDB.ExternalDBManager;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import javafx.stage.FileChooser;
@@ -130,16 +131,21 @@ public class MainUIController implements Initializable {
     @FXML
     private CheckBox showSystemMessagsCheckBox;
     private ArrayList<Schedules> faultySchedulesList;
+    @FXML
+    private Button refreshExternalDatabasesButton;
+    private ExternalDBManager externalDB;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        new File("/" + calc.getTempPath()).mkdirs();
         errorWindow = new ErrorMessageController(this);
         placeSideLabel(14, 80);
         setConnectingInfoText("");
         checkLogin();
+        externalDB = new ExternalDBManager(this);
         aircraftTab = new AircraftTab(this, listBox, idLabel, icaoLabel, nameLabel, fullnameLabel, registrationLabel, downloadlinkLabel, imagelinkLabel, rangeLabel, weightLabel, cruiseLabel, maxpaxLabel, maxcargoLabel, minrankLabel, ranklevelLabel, aircraftImage, enabledSlider, toggleAircraftEnabledButton);
         probelmaticRouteTab = new ProbelmaticRouteTab(problematicRouteTable);
-        chatTab = new ChatTab(messageList,showSystemMessagsCheckBox);
+        chatTab = new ChatTab(messageList, showSystemMessagsCheckBox);
     }
 
     @FXML
@@ -288,7 +294,7 @@ public class MainUIController implements Initializable {
                         String depicao = rs.getString("depicao");
                         String arricao = rs.getString("arricao");
                         String route = rs.getString("route");
-                        String routeDetails  = rs.getString("route_details");
+                        String routeDetails = rs.getString("route_details");
                         String aircraft = rs.getString("aircraft");
                         String flightlevel = rs.getString("flightlevel");
                         String deptime = rs.getString("deptime");
@@ -301,9 +307,7 @@ public class MainUIController implements Initializable {
                         String notes = rs.getString("notes");
                         int enabled = rs.getInt("enabled");
                         int bidid = rs.getInt("bidid");
-                        
-                                
-                        
+
                         Schedules schedule = new Schedules(id, flightnum, depicao, arricao, route, routeDetails, aircraft, flightlevel, distanceInt, deptime, arrtime, flighttime, daysofweek, price, flighttype, timesflown, notes, enabled, bidid);
                         faultySchedulesList.add(schedule);
                         System.out.print("Route distance: " + String.valueOf(distanceInt) + "nm  \t" + "Aircraft type: " + aircraftNAME + "  \tRange of aircraft: " + String.valueOf(rangeInt) + "nm\t");
@@ -391,14 +395,18 @@ public class MainUIController implements Initializable {
         TextField urlTextField = new TextField();
         grid.add(urlTextField, 1, 3);
 
-        if (!URL.isEmpty()) {
-            urlTextField.setText(URL);
-        }
-        if (!USERNAME.isEmpty()) {
-            userTextField.setText(USERNAME);
-        }
-        if (!PASSWORD.isEmpty()) {
-            pwBox.setText(PASSWORD);
+        try {
+            if (!URL.isEmpty()) {
+                urlTextField.setText(URL);
+            }
+            if (!USERNAME.isEmpty()) {
+                userTextField.setText(USERNAME);
+            }
+            if (!PASSWORD.isEmpty()) {
+                pwBox.setText(PASSWORD);
+            }
+        } catch (NullPointerException e) {
+            e.printStackTrace(System.err);
         }
 
         Button btn = new Button("Sign in");
@@ -475,10 +483,10 @@ public class MainUIController implements Initializable {
             String message = rs.getString("message");
             String time = rs.getString("time");
             String timestamp = rs.getString("timestamp");
-            
+
             Acarschat chatMessage = new Acarschat(id, pilotid, message, time, timestamp);
             chatList.add(chatMessage);
-            
+
         }
         chatTab.createChatHistory(chatList);
     }
@@ -487,5 +495,20 @@ public class MainUIController implements Initializable {
     private void refreshChatHistory(ActionEvent event) {
         chatTab.refreshChatHistory(event);
     }
+
+    @FXML
+    private void refreshExternalDatabases(ActionEvent event) {
+        String ROUTES = calc.getTempPath() + "/routes.dat";
+        String AIRLINES = calc.getTempPath() + "/airlines.dat";
+        String AIRPORTS = calc.getTempPath() + "/airports.dat";
+        calc.saveFile("http://sourceforge.net/p/openflights/code/HEAD/tree/openflights/data/routes.dat?format=raw", ROUTES);
+        calc.saveFile("http://sourceforge.net/p/openflights/code/HEAD/tree/openflights/data/airlines.dat?format=raw", AIRLINES);
+        calc.saveFile("http://sourceforge.net/p/openflights/code/HEAD/tree/openflights/data/airports.dat?format=raw", AIRPORTS);
+        externalDB.readExternalAirportsData(AIRPORTS);
+        externalDB.readExternalAirlinesData(AIRLINES);
+        externalDB.readExternalRoutesData(ROUTES);
+    }
+
+    
 
 }

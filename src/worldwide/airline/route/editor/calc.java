@@ -6,9 +6,13 @@
 package worldwide.airline.route.editor;
 
 import java.awt.Desktop;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 
 /**
@@ -81,7 +85,6 @@ public class calc {
         return newArray;
 
     }
-    
 
     static String getCurrentTimeAsString(String format) {
         return new SimpleDateFormat(format).format(new java.util.Date());
@@ -89,7 +92,7 @@ public class calc {
 
     static String getTempPath() {
         String property = "java.io.tmpdir";
-        return System.getProperty(property);
+        return System.getProperty(property) + "/WDWVA";
     }
 
     public static void openWebpage(String url) {
@@ -104,5 +107,36 @@ public class calc {
 
     static String convertToHex(int rgb) {
         return Integer.toHexString(rgb);
+    }
+
+    /**
+     * Saves the file from the specified link to the destination File. 
+     * Returns false if an error occured
+     * 
+     * @param fileURL
+     * @param destinationFile
+     * @return operation successfull
+     */
+    static boolean saveFile(String fileURL, String destinationFile){
+        try {
+            URL url = new URL(fileURL);
+
+            InputStream is = url.openStream();
+            OutputStream os = new FileOutputStream(destinationFile);
+
+            byte[] b = new byte[2048];
+            int length;
+
+            while ((length = is.read(b)) != -1) {
+                os.write(b, 0, length);
+            }
+
+            is.close();
+            os.close();
+            return true;
+        }
+        catch(Exception e){
+            return false;
+        }
     }
 }

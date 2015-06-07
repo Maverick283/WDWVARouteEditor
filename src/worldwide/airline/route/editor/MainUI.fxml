@@ -19,8 +19,13 @@
                      <content>
                         <AnchorPane prefHeight="538.0" prefWidth="1000.0">
                            <children>
-                              <Button fx:id="connectToDBButton" layoutX="26.0" layoutY="33.0" mnemonicParsing="false" onAction="#connectToDB" text="Connect to database" />
-                              <Button fx:id="changeLoginCredentialsButton" layoutX="26.0" layoutY="69.0" mnemonicParsing="false" onAction="#getLoginCredentials" text="Change credentials" />
+                              <VBox alignment="BOTTOM_LEFT" layoutX="26.0" layoutY="33.0" spacing="10.0" AnchorPane.leftAnchor="26.0" AnchorPane.topAnchor="33.0">
+                                 <children>
+                                    <Button fx:id="connectToDBButton" layoutX="26.0" layoutY="33.0" mnemonicParsing="false" onAction="#connectToDB" text="Connect to database" />
+                                    <Button fx:id="refreshExternalDatabasesButton" mnemonicParsing="false" onAction="#refreshExternalDatabases" text="Refresh external databases" />
+                                    <Button fx:id="changeLoginCredentialsButton" layoutX="26.0" layoutY="69.0" mnemonicParsing="false" onAction="#getLoginCredentials" text="Change credentials" />
+                                 </children>
+                              </VBox>
                               <Label fx:id="connectingInfoLabel" layoutX="179.0" layoutY="37.0" text="Label" />
                            </children>
                         </AnchorPane>
