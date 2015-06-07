@@ -120,4 +120,10 @@ public class ExternalDBTab {
         airlineTableView.setItems(FXCollections.observableArrayList(airlines));
     }
 
+    void refresh() {
+        fillRoutes();
+        fillAirlines();
+        fillAirports();
+    }
+
 }
