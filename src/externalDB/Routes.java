@@ -100,6 +100,14 @@ public class Routes {
     void setAirline(Airlines airline) {
         this.airline = airline;
     }
+    
+    Airports getDepAirport(){
+        return depAirport;
+    }
+    
+    Airports getArrAirport(){
+        return arrAirport;
+    }
 
     private int parseInt(String entry) {
         try {

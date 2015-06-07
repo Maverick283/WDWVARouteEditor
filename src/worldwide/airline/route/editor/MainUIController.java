@@ -134,6 +134,12 @@ public class MainUIController implements Initializable {
     @FXML
     private Button refreshExternalDatabasesButton;
     private ExternalDBManager externalDB;
+    @FXML
+    private TableView<?> externalDBRoutesTableView2;
+    @FXML
+    private TableView<?> externalDBAirportsTableView1;
+    @FXML
+    private TableView<?> externalDBAirlinesTableView;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {

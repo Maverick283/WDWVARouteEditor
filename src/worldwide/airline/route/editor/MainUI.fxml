@@ -165,6 +165,78 @@
                         </AnchorPane>
                      </content>
                   </Tab>
+                  <Tab text="External DB">
+                     <content>
+                        <TabPane prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE">
+                          <tabs>
+                            <Tab text="Routes">
+                              <content>
+                                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                       <children>
+                                          <TableView fx:id="externalDBRoutesTableView2" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="14.0">
+                                             <columns>
+                                                <TableColumn prefWidth="75.0" text="Airline" />
+                                                <TableColumn prefWidth="75.0" text="Airline ID" />
+                                                <TableColumn prefWidth="75.0" text="Source Airp." />
+                                                <TableColumn prefWidth="75.0" text="Source Airp. ID" />
+                                                <TableColumn prefWidth="75.0" text="Destination Airp." />
+                                                <TableColumn prefWidth="75.0" text="Destination Airp. ID" />
+                                                <TableColumn prefWidth="75.0" text="Codeshare" />
+                                                <TableColumn prefWidth="75.0" text="Stops" />
+                                                <TableColumn prefWidth="75.0" text="Equipment" />
+                                             </columns>
+                                          </TableView>
+                                       </children>
+                                    </AnchorPane>
+                              </content>
+                            </Tab>
+                            <Tab text="Airports">
+                              <content>
+                                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                       <children>
+                                          <TableView fx:id="externalDBAirportsTableView1" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="14.0">
+                                             <columns>
+                                                <TableColumn prefWidth="75.0" text="Airport ID" />
+                                                <TableColumn prefWidth="75.0" text="Name" />
+                                                <TableColumn prefWidth="75.0" text="Country" />
+                                                <TableColumn prefWidth="75.0" text="IATA/FAA" />
+                                                <TableColumn prefWidth="75.0" text="ICAO" />
+                                                <TableColumn prefWidth="75.0" text="Lat." />
+                                                <TableColumn prefWidth="75.0" text="Lon." />
+                                                <TableColumn prefWidth="75.0" text="Altitude" />
+                                                <TableColumn prefWidth="75.0" text="Timezone" />
+                                                <TableColumn prefWidth="75.0" text="DST" />
+                                                <TableColumn prefWidth="75.0" text="DB Timezone" />
+                                             </columns>
+                                          </TableView>
+                                       </children>
+                                    </AnchorPane>
+                              </content>
+                            </Tab>
+                              <Tab text="Airlines">
+                                <content>
+                                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                       <children>
+                                          <TableView fx:id="externalDBAirlinesTableView" layoutX="14.0" layoutY="14.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="14.0">
+                                            <columns>
+                                              <TableColumn prefWidth="75.0" text="Airline ID" />
+                                              <TableColumn prefWidth="75.0" text="Name" />
+                                                <TableColumn prefWidth="75.0" text="Alias" />
+                                                <TableColumn prefWidth="75.0" text="IATA" />
+                                                <TableColumn prefWidth="75.0" text="ICAO" />
+                                                <TableColumn prefWidth="75.0" text="Callsign" />
+                                                <TableColumn prefWidth="75.0" text="Country" />
+                                                <TableColumn prefWidth="75.0" text="Active" />
+                                            </columns>
+                                          </TableView>
+                                       </children>
+                                    </AnchorPane>
+                                </content>
+                              </Tab>
+                          </tabs>
+                        </TabPane>
+                     </content>
+                  </Tab>
               </tabs>
             </TabPane>
             <Separator prefWidth="200.0" />

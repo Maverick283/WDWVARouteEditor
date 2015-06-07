@@ -31,7 +31,7 @@ public class Airports {
         country = entries[3];
         iATAFAA = entries[4];
         iCAO = entries[5];
-        if(entries[6].equalsIgnoreCase("\"GVSF\"")){
+        if(entries[6].equalsIgnoreCase("\"GVNP\"")){
             System.out.println("Found it");
         }
         latitude = Double.parseDouble(entries[6]);

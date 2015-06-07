@@ -9,6 +9,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import sql.Schedules;
 import worldwide.airline.route.editor.MainUIController;
 
 /**
@@ -34,7 +35,7 @@ public class ExternalDBManager {
         airlineList = new ArrayList<>();
         airportList = new ArrayList<>();
         routeList = new ArrayList<>();
-        
+
         refreshData();
     }
 
@@ -88,11 +89,19 @@ public class ExternalDBManager {
              */
             while ((line = br.readLine()) != null) {
                 //Due to bad Database management some airports have to be hard coded here... :(
-                if(line.substring(0, 4).equalsIgnoreCase("5881")){                    
-                    line = line.replace("\"Angaha, Niuafo'ou Island\"", "\"Angaha Niuafo'ou Island\"");
-                }
-                if(line.substring(0, 4).equalsIgnoreCase("5675")){                    
-                    line = line.replace("\"Sao Filipe, Fogo Island\"", "\"Sao Filipe Fogo Island\"");
+                switch (line.substring(0, 4)) {
+                    case "5881":
+                        line = line.replace("\"Angaha, Niuafo'ou Island\"", "\"Angaha Niuafo'ou Island\"");
+                        break;
+                    case "5675":
+                        line = line.replace("\"Sao Filipe, Fogo Island\"", "\"Sao Filipe Fogo Island\"");
+                        break;
+                    case "5674":
+                        line = line.replace("\"Praia, Santiago Island\"", "\"Praia Santiago Island\"");
+                        break;
+                    case "5562":
+                        line = line.replace("\"Doncaster, Sheffield\"", "\"Doncaster Sheffield\"");
+                        break;
                 }
                 String[] entries = line.split(",");
                 Airports instance = new Airports(entries);
@@ -165,5 +174,24 @@ public class ExternalDBManager {
         }
 
         coupleRoutes();
+    }
+
+    public ArrayList<Schedules> checkForRealRoutes(ArrayList<Schedules> allRoutes) {
+        ArrayList<Schedules> toReturn = new ArrayList<Schedules>();
+        for (Schedules allRoute : allRoutes) {
+            if (!isValidRoute(allRoute.getDepicao(), allRoute.getArricao())) {
+                toReturn.add(allRoute);
+            }
+        }
+        return toReturn;
+    }
+
+    private boolean isValidRoute(String depicao, String arricao) {
+        for (Routes route : routeList) {
+            if (route.getDepAirport().getICAO().equalsIgnoreCase(depicao) && route.getArrAirport().getICAO().equalsIgnoreCase(arricao)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
