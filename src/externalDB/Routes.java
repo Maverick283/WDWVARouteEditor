@@ -11,7 +11,7 @@ package externalDB;
  */
 public class Routes {
 
-    String airline;
+    String airlineName;
     int airlineID;
     String sourceAirport;
     int sourceAirportID;
@@ -20,9 +20,13 @@ public class Routes {
     boolean codeshare;
     int stops;
     String[] equipment;
+    
+    Airports depAirport;
+    Airports arrAirport;
+    Airlines airline;
 
     Routes(String[] entries) {
-        airline = entries[0];
+        airlineName = entries[0];
         airlineID = Integer.parseInt(entries[1]);
         sourceAirport = entries[2];
         sourceAirportID = Integer.parseInt(entries[3]);
@@ -33,8 +37,8 @@ public class Routes {
         equipment = entries[8].split(" ");
     }
     
-    Routes(String airline, int airlineID, String sourceAirport, int sourceAirportID, String destinationAirport, boolean codeshare, int stops, String[] equipment){
-        this.airline = airline;
+    Routes(String airlineName, int airlineID, String sourceAirport, int sourceAirportID, String destinationAirport, boolean codeshare, int stops, String[] equipment){
+        this.airlineName = airlineName;
         this.airlineID = airlineID;
         this.sourceAirport = sourceAirport;
         this.sourceAirportID = sourceAirportID;

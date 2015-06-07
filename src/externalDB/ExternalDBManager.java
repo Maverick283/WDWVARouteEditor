@@ -22,12 +22,28 @@ public class ExternalDBManager {
     ArrayList<Airlines> airlineList;
     ArrayList<Airports> airportList;
     ArrayList<Routes> routeList;
+    private final String ROUTES;
+    private final String AIRPORTS;
+    private final String AIRLINES;
 
-    public ExternalDBManager(MainUIController father) {
+    public ExternalDBManager(MainUIController father, String ROUTES, String AIRPORTS, String AIRLINES) {
         this.father = father;
+        this.ROUTES = ROUTES;
+        this.AIRPORTS = AIRPORTS;
+        this.AIRLINES = AIRLINES;
         airlineList = new ArrayList<>();
         airportList = new ArrayList<>();
         routeList = new ArrayList<>();
+        try{
+            readExternalAirlinesData();
+            readExternalAirportsData();
+            readExternalRoutesData();
+        }
+        catch(Exception e){
+            e.printStackTrace(System.err);
+        }
+        
+        coupleRoutes();
     }
 
     /**
@@ -35,8 +51,8 @@ public class ExternalDBManager {
      *
      * @param inputFilePath
      */
-    public void readExternalRoutesData(String inputFilePath) {
-        try (BufferedReader br = new BufferedReader(new FileReader(inputFilePath))) {
+    public void readExternalRoutesData() {
+        try (BufferedReader br = new BufferedReader(new FileReader(ROUTES))) {
             String line;
             /* Syntax of routes.dat
              Airline	2-letter (IATA) or 3-letter (ICAO) code of the airline.
@@ -58,8 +74,8 @@ public class ExternalDBManager {
         }
     }
 
-    public void readExternalAirportsData(String inputFilePath) {
-        try (BufferedReader br = new BufferedReader(new FileReader(inputFilePath))) {
+    public void readExternalAirportsData() {
+        try (BufferedReader br = new BufferedReader(new FileReader(AIRPORTS))) {
             String line;
             /* Syntax of airports.dat
              Airport ID	Unique OpenFlights identifier for this airport.
@@ -88,8 +104,8 @@ public class ExternalDBManager {
         }
     }
 
-    public void readExternalAirlinesData(String inputFilePath) {
-        try (BufferedReader br = new BufferedReader(new FileReader(inputFilePath))) {
+    public void readExternalAirlinesData() {
+        try (BufferedReader br = new BufferedReader(new FileReader(AIRLINES))) {
             String line;
             /* Syntax of airlines.dat
              Airline ID	Unique OpenFlights identifier for this airline.
@@ -109,5 +125,35 @@ public class ExternalDBManager {
             }
         } catch (IOException e) {
         }
+    }
+
+    private void coupleRoutes() {
+        for(int i = 0; i<routeList.size();i++){
+            Routes route = routeList.get(i);
+            int depAirportID = route.getSourceAirportID();
+            int arrAirportID = route.getDestinationAirportID();
+            String airlineID = route.getAirlineID();
+            route.setDepAirport(findAirportByID(depAirportID));
+            route.setArrAirport(findAirportByID(arrAirportID));
+            route.setAirline(findAirlineByID(airlineID));
+        }
+    }
+    
+    private Airports findAirportByID(int iD){
+        for (Airports airport : airportList) {
+            if (airport.getAirportID() == iD) {
+                return airport;
+            }
+        }
+        return null;
+    }
+    
+    private Airlines findAirlineByID(String iD){
+        for (Airlines airline : airlineList) {
+            if (airline.getAirlineID().equalsIgnoreCase(iD)) {
+                return airline;
+            }
+        }
+        return null;
     }
 }
