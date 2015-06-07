@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -147,6 +148,10 @@ public class MainUIController implements Initializable {
     @FXML
     private TableView<Airports> externalDBAirportsTableView;
     private ArrayList allSchedulesList;
+    @FXML
+    private TextField dbQueryTextArea;
+    @FXML
+    private Button submitQueryToDBButton;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -560,6 +565,23 @@ public class MainUIController implements Initializable {
     @FXML
     private void refreshProblematicRoutes(ActionEvent event) {
         probelmaticRouteTab.refresh(event);
+    }
+
+    @FXML
+    private void submitQueryToDB(ActionEvent event) {
+        try {
+            Statement statement = con.createStatement();
+            // Result set get the result of the SQL query
+            PreparedStatement preparedStatement = con.prepareStatement(dbQueryTextArea.getText());
+            preparedStatement.executeQuery();
+            
+            preparedStatement.close();
+            statement.close();
+        } catch (Exception e) {
+            e.printStackTrace(System.err);
+        } finally {
+            ;
+        }
     }
 
 }
