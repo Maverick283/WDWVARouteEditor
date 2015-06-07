@@ -146,6 +146,7 @@ public class MainUIController implements Initializable {
     private TableView<Routes> externalDBRoutesTableView;
     @FXML
     private TableView<Airports> externalDBAirportsTableView;
+    private ArrayList allSchedulesList;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -160,9 +161,11 @@ public class MainUIController implements Initializable {
         String AIRPORTS = calc.getTempPath() + "/airports.dat";
         externalDB = new ExternalDBManager(this, ROUTES, AIRPORTS, AIRLINES);
         aircraftTab = new AircraftTab(this, listBox, idLabel, icaoLabel, nameLabel, fullnameLabel, registrationLabel, downloadlinkLabel, imagelinkLabel, rangeLabel, weightLabel, cruiseLabel, maxpaxLabel, maxcargoLabel, minrankLabel, ranklevelLabel, aircraftImage, enabledSlider, toggleAircraftEnabledButton);
-        probelmaticRouteTab = new ProbelmaticRouteTab(problematicRouteTable,this);
+        probelmaticRouteTab = new ProbelmaticRouteTab(problematicRouteTable, this);
         chatTab = new ChatTab(messageList, showSystemMessagsCheckBox);
-        externalDBTab = new ExternalDBTab(this,externalDB.getRoutes(), externalDB.getAirports(), externalDB.getAirlines(),externalDBRoutesTableView,externalDBAirlinesTableView,externalDBAirportsTableView);
+        externalDBTab = new ExternalDBTab(this, externalDB.getRoutes(), externalDB.getAirports(), externalDB.getAirlines(), externalDBRoutesTableView, externalDBAirlinesTableView, externalDBAirportsTableView);
+        
+        allSchedulesList = new ArrayList<Schedules>();
     }
 
     @FXML
@@ -268,14 +271,15 @@ public class MainUIController implements Initializable {
 
         }
         aircraftTab.createList(aircraftList);
-        checkAllRoutesForAircraftCompatibility(aircraftList);
+        checkAllRoutesForErrors(aircraftList);
 
         //STEP 6: Clean-up environment
         rs.close();
         stmt.close();
     }
 
-    private void checkAllRoutesForAircraftCompatibility(ArrayList<Aircraft> aircraftList) {
+    private void checkAllRoutesForErrors(ArrayList<Aircraft> aircraftList) {
+        //Checks for Aircraft Compatibility Issues
         try {
             Statement stmt = con.createStatement();
             String sql;
@@ -288,6 +292,25 @@ public class MainUIController implements Initializable {
                 int id = rs.getInt("id");
                 int aircraftID = rs.getInt("aircraft");
                 String distance = rs.getString("distance");
+                String flightnum = rs.getString("flightnum");
+                String depicao = rs.getString("depicao");
+                String arricao = rs.getString("arricao");
+                String route = rs.getString("route");
+                String routeDetails = rs.getString("route_details");
+                String aircraft = rs.getString("aircraft");
+                String flightlevel = rs.getString("flightlevel");
+                String deptime = rs.getString("deptime");
+                String arrtime = rs.getString("arrtime");
+                float flighttime = rs.getFloat("flighttime");
+                String daysofweek = rs.getString("daysofweek");
+                float price = rs.getFloat("price");
+                String flighttype = rs.getString("flighttype");
+                int timesflown = rs.getInt("timesflown");
+                String notes = rs.getString("notes");
+                int enabled = rs.getInt("enabled");
+                int bidid = rs.getInt("bidid");
+                
+                Schedules schedule = new Schedules(id, flightnum, depicao, arricao, route, routeDetails, aircraft, flightlevel, price, deptime, arrtime, flighttime, daysofweek, price, flighttype, timesflown, notes, enabled, bidid);
                 String aircraftNAME = aircraftList.get(aircraftID - 1).getName();
                 //Get Data to a string that can be parsed
                 distance = distance.replaceAll("[^\\d.]", "");
@@ -307,25 +330,8 @@ public class MainUIController implements Initializable {
                     //compare aircraft range to route distance
                     if (rangeInt < distanceInt) {
                         //print message if needed
-                        String flightnum = rs.getString("flightnum");
-                        String depicao = rs.getString("depicao");
-                        String arricao = rs.getString("arricao");
-                        String route = rs.getString("route");
-                        String routeDetails = rs.getString("route_details");
-                        String aircraft = rs.getString("aircraft");
-                        String flightlevel = rs.getString("flightlevel");
-                        String deptime = rs.getString("deptime");
-                        String arrtime = rs.getString("arrtime");
-                        float flighttime = rs.getFloat("flighttime");
-                        String daysofweek = rs.getString("daysofweek");
-                        float price = rs.getFloat("price");
-                        String flighttype = rs.getString("flighttype");
-                        int timesflown = rs.getInt("timesflown");
-                        String notes = rs.getString("notes");
-                        int enabled = rs.getInt("enabled");
-                        int bidid = rs.getInt("bidid");
 
-                        Schedules schedule = new Schedules(id, flightnum, depicao, arricao, route, routeDetails, aircraft, flightlevel, distanceInt, deptime, arrtime, flighttime, daysofweek, price, flighttype, timesflown, notes, enabled, bidid);
+                        schedule.setIssue("Aircraft can't handle the distance");
                         faultySchedulesList.add(schedule);
                         System.out.print("Route distance: " + String.valueOf(distanceInt) + "nm  \t" + "Aircraft type: " + aircraftNAME + "  \tRange of aircraft: " + String.valueOf(rangeInt) + "nm\t");
                         System.out.println("Route with the ID " + id + " has a Problem!");
@@ -335,12 +341,22 @@ public class MainUIController implements Initializable {
                     System.out.println("Error" + distance + "    " + range);
                 }
 
+                allSchedulesList.add(schedule);
             }
-            probelmaticRouteTab.createList(faultySchedulesList);
 
             //STEP 6: Clean-up environment
             rs.close();
             stmt.close();
+
+            //Checks for real World Routes
+            ArrayList<Schedules> nonExcistingSchedules = externalDB.checkForRealRoutes(allSchedulesList);
+            for (Schedules nonExcistingSchedule : nonExcistingSchedules) {
+                nonExcistingSchedule.setIssue("Not a real route");
+            }
+            faultySchedulesList.addAll(nonExcistingSchedules);
+            
+            
+            probelmaticRouteTab.createList(faultySchedulesList);
         } catch (SQLException ex) {
             ex.printStackTrace(System.err);
         }
@@ -523,6 +539,7 @@ public class MainUIController implements Initializable {
         calc.saveFile("http://sourceforge.net/p/openflights/code/HEAD/tree/openflights/data/airlines.dat?format=raw", AIRLINES);
         calc.saveFile("http://sourceforge.net/p/openflights/code/HEAD/tree/openflights/data/airports.dat?format=raw", AIRPORTS);
         externalDB.refreshData();
+        externalDBTab.refresh();
     }
 
     @FXML

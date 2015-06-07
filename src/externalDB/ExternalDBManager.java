@@ -186,24 +186,29 @@ public class ExternalDBManager {
         return toReturn;
     }
 
-    private boolean isValidRoute(String depicao, String arricao) {
+    public boolean isValidRoute(String depicao, String arricao) {
         for (Routes route : routeList) {
-            if (route.getDepAirport().getICAO().equalsIgnoreCase(depicao) && route.getArrAirport().getICAO().equalsIgnoreCase(arricao)) {
-                return true;
+            try {
+                String routeDepICAO = route.getDepAirport().getICAO();
+                String routeArrICAO = route.getArrAirport().getICAO();
+                if (routeDepICAO.equalsIgnoreCase(depicao) && routeArrICAO.equalsIgnoreCase(arricao)) {
+                    return true;
+                }
+            } catch (NullPointerException e) {
             }
         }
         return false;
     }
-    
-    public ArrayList getRoutes(){
+
+    public ArrayList getRoutes() {
         return routeList;
     }
-    
-    public ArrayList getAirports(){
+
+    public ArrayList getAirports() {
         return airportList;
     }
-    
-    public ArrayList getAirlines(){
+
+    public ArrayList getAirlines() {
         return airlineList;
     }
 }

@@ -46,6 +46,7 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "Schedules.findByEnabled", query = "SELECT s FROM Schedules s WHERE s.enabled = :enabled"),
     @NamedQuery(name = "Schedules.findByBidid", query = "SELECT s FROM Schedules s WHERE s.bidid = :bidid")})
 public class Schedules implements Serializable {
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -113,6 +114,8 @@ public class Schedules implements Serializable {
     @JoinColumn(name = "code", referencedColumnName = "code")
     @ManyToOne(optional = false)
     private Airlines code;
+
+    String issue;
 
     public Schedules() {
     }
@@ -299,8 +302,16 @@ public class Schedules implements Serializable {
         return code;
     }
 
+    public String getIssue() {
+        return issue;
+    }
+
     public void setCode(Airlines code) {
         this.code = code;
+    }
+
+    public void setIssue(String issue) {
+        this.issue = issue;
     }
 
     @Override
@@ -327,5 +338,5 @@ public class Schedules implements Serializable {
     public String toString() {
         return "worldwide.airline.route.editor.Schedules[ id=" + id + " ]";
     }
-    
+
 }

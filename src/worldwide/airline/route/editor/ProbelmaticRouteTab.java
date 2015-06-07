@@ -39,6 +39,7 @@ public class ProbelmaticRouteTab {
     TableColumn timesflown;
     TableColumn notes;
     TableColumn enabled;
+    TableColumn issue;
     private final MainUIController father;
 
     ProbelmaticRouteTab(TableView<Schedules> problematicRouteTable, MainUIController father) {
@@ -62,6 +63,7 @@ public class ProbelmaticRouteTab {
         timesflown = problematicRouteTable.getColumns().get(16);
         notes = problematicRouteTable.getColumns().get(17);
         enabled = problematicRouteTable.getColumns().get(18);
+        issue = problematicRouteTable.getColumns().get(19);
         
         this.father = father;
     }
@@ -86,6 +88,7 @@ public class ProbelmaticRouteTab {
         timesflown.setCellValueFactory(new PropertyValueFactory<Schedules, String>("timesflown"));
         notes.setCellValueFactory(new PropertyValueFactory<Schedules, String>("notes"));
         enabled.setCellValueFactory(new PropertyValueFactory<Schedules, String>("enabled"));
+        issue.setCellValueFactory(new PropertyValueFactory<Schedules, String>("issue"));
         problematicRouteTable.setItems(FXCollections.observableArrayList(faultySchedulesList));
     }
 
