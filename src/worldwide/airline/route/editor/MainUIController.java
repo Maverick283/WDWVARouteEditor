@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -149,11 +150,13 @@ public class MainUIController implements Initializable {
     private TableView<Routes> externalDBRoutesTableView;
     @FXML
     private TableView<Airports> externalDBAirportsTableView;
-    private ArrayList allSchedulesList;
+    private ArrayList<Schedules> allSchedulesList;
     @FXML
     private TextField dbQueryTextArea;
     @FXML
     private Button submitQueryToDBButton;
+    @FXML
+    private Button createMissingRoutesButton;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -161,6 +164,9 @@ public class MainUIController implements Initializable {
         errorWindow = new ErrorMessageController(this);
         placeSideLabel(14, 80);
         setConnectingInfoText("");
+        dbQueryTextArea.setDisable(true);
+        submitQueryToDBButton.setDisable(true);
+        createMissingRoutesButton.setDisable(true);
         checkLogin();
 
         String ROUTES = calc.getTempPath() + "/routes.dat";
@@ -181,7 +187,9 @@ public class MainUIController implements Initializable {
         try {
             Class.forName("com.mysql.jdbc.Driver");
             con = DriverManager.getConnection(URL, USERNAME, PASSWORD);
-            loginStatusLabel.setText("Connected as " + USERNAME);
+            dbQueryTextArea.setDisable(false);
+            submitQueryToDBButton.setDisable(false);
+            createMissingRoutesButton.setDisable(false);
             Platform.runLater(() -> {
                 try {
                     getAircrafts();
@@ -193,6 +201,7 @@ public class MainUIController implements Initializable {
             });
             setConnectingInfoText("Connected");
             connectToDBButton.setText("Disconnect");
+            loginStatusLabel.setText("Connected as " + USERNAME);
             connectToDBButton.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent e) {
@@ -509,6 +518,9 @@ public class MainUIController implements Initializable {
             connectToDBButton.setText("Connect to databse");
             connectingInfoLabel.setText("Disconnected");
             loginStatusLabel.setText("Not looged in!");
+            dbQueryTextArea.setDisable(true);
+            submitQueryToDBButton.setDisable(true);
+            createMissingRoutesButton.setDisable(true);
             connectToDBButton.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent e) {
@@ -576,7 +588,7 @@ public class MainUIController implements Initializable {
             // Result set get the result of the SQL query
             PreparedStatement preparedStatement = con.prepareStatement(dbQueryTextArea.getText());
             preparedStatement.execute();
-            
+
             preparedStatement.close();
             statement.close();
         } catch (Exception e) {
@@ -595,6 +607,58 @@ public class MainUIController implements Initializable {
         } catch (SQLException ex) {
             ex.printStackTrace(System.err);
         }
+    }
+
+    @FXML
+    private void createMissingRoutes(ActionEvent event) {
+        for (Schedules schedule : allSchedulesList) {
+            String route = schedule.getRoute();
+            if (route.contains("www.") || route.isEmpty()) {
+                String[] routeInfo = findRoute(schedule.getDepicao(), schedule.getArricao());
+                schedule.setRoute(routeInfo[0]);
+                schedule.setNotes(routeInfo[1]);
+                submitQuery("UPDATE schedules SET route = " + schedule.getRoute() +" WHERE id = " + schedule.getId() + ";");
+                submitQuery("UPDATE schedules SET notes = " + schedule.getNotes() +" WHERE id = " + schedule.getId() + ";");
+                System.out.println("Route WDW" + schedule.getFlightnum() + " changed to: " + schedule.getRoute());
+            }
+        }
+    }
+
+    private String[] findRoute(String depicao, String arricao) {
+        try {
+            String line = "";
+            URL myUrl = null;
+            BufferedReader in = null;
+            myUrl = new URL("http://www.vatroute.net/web_showfp.php?dep=" + depicao + "&dest=" + arricao);
+            in = new BufferedReader(new InputStreamReader(myUrl.openStream()));
+            String route = "";
+            String notes = "";
+            while ((line = in.readLine()) != null) {
+                //System.out.println(line);
+                if (line.contains("class=\"tdcellspacing-right\">")) {
+                    line = line.substring(line.indexOf("class=\"tdcellspacing-right\">") + 28);
+                    line = line.substring(0, line.indexOf("</td>"));
+                    line = line.replaceAll("<i></i>", "");
+                    line = line.replaceAll("<b></b>", "");
+                    line = line.replaceAll("<u></u>", "");
+                    route = line;
+
+                    line = in.readLine();
+                    line = line.substring(line.indexOf("class=\"tdcellspacing\">") + 22);
+                    line = line.substring(0, line.indexOf("<</td>"));
+                    notes = line;
+                }
+            }
+            
+            String[] toReturn = new String[2];
+            toReturn[0] = route;
+            toReturn[1] = notes;
+            
+            return toReturn;
+        } catch (IOException ex) {
+            ex.printStackTrace(System.err);
+        }
+        return new String[] {"www.rfinder.asalink.net/free/"};
     }
 
 }

@@ -23,12 +23,17 @@
                                  <children>
                                     <Button fx:id="connectToDBButton" layoutX="26.0" layoutY="33.0" mnemonicParsing="false" onAction="#connectToDB" text="Connect to database" />
                                     <Button fx:id="refreshExternalDatabasesButton" mnemonicParsing="false" onAction="#refreshExternalDatabases" text="Refresh external databases" />
+                                    <HBox>
+                                       <children>
+                                          <TextField fx:id="dbQueryTextArea" layoutX="26.0" layoutY="144.0" onAction="#submitQueryToDB" prefHeight="25.0" prefWidth="689.0" />
+                                          <Button fx:id="submitQueryToDBButton" layoutX="728.0" layoutY="144.0" mnemonicParsing="false" onAction="#submitQueryToDB" text="Submit Query" />
+                                       </children>
+                                    </HBox>
+                                    <Button fx:id="createMissingRoutesButton" mnemonicParsing="false" onAction="#createMissingRoutes" text="Find routes for all flights without routes" />
                                     <Button fx:id="changeLoginCredentialsButton" layoutX="26.0" layoutY="69.0" mnemonicParsing="false" onAction="#getLoginCredentials" text="Change credentials" />
                                  </children>
                               </VBox>
                               <Label fx:id="connectingInfoLabel" layoutX="179.0" layoutY="37.0" text="Label" />
-                              <TextField fx:id="dbQueryTextArea" layoutX="26.0" layoutY="144.0" onAction="#submitQueryToDB" prefHeight="25.0" prefWidth="689.0" />
-                              <Button fx:id="submitQueryToDBButton" layoutX="728.0" layoutY="144.0" mnemonicParsing="false" onAction="#submitQueryToDB" text="Submit Query" />
                            </children>
                         </AnchorPane>
                      </content>
@@ -128,7 +133,7 @@
                      <content>
                         <AnchorPane prefHeight="538.0" prefWidth="1000.0">
                            <children>
-                              <TableView fx:id="problematicRouteTable" editable="true" layoutX="14.0" layoutY="95.0" prefHeight="418.0" prefWidth="980.0" AnchorPane.leftAnchor="6.0" AnchorPane.rightAnchor="6.0">
+                              <TableView fx:id="problematicRouteTable" editable="true" layoutX="14.0" layoutY="95.0" prefHeight="418.0" prefWidth="980.0" AnchorPane.bottomAnchor="25.0" AnchorPane.leftAnchor="6.0" AnchorPane.rightAnchor="6.0" AnchorPane.topAnchor="95.0">
                                  <columns>
                                     <TableColumn prefWidth="40.0" text="ID" />
                                     <TableColumn prefWidth="40.0" text="CODE" />
