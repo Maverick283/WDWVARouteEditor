@@ -31,4 +31,28 @@ public class Airlines {
         active = entries[7].equalsIgnoreCase("Y");
     }
     
+    public String getAirlineID(){
+        return airlineID;
+    }
+    public String getName(){
+        return name;
+    }
+    public String getAlias(){
+        return alias;
+    }
+    public String getIATA(){
+        return iATA;
+    }
+    public String getICAO(){
+        return iCAO;
+    }
+    public String getCallsign(){
+        return callsign;
+    }
+    public String getCountry(){
+        return country;
+    }
+    public boolean getActive(){
+        return active;
+    }
 }
