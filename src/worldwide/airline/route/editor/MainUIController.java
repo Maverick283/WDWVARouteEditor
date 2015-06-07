@@ -583,19 +583,7 @@ public class MainUIController implements Initializable {
 
     @FXML
     private void submitQueryToDB(ActionEvent event) {
-        try {
-            Statement statement = con.createStatement();
-            // Result set get the result of the SQL query
-            PreparedStatement preparedStatement = con.prepareStatement(dbQueryTextArea.getText());
-            preparedStatement.execute();
-
-            preparedStatement.close();
-            statement.close();
-        } catch (Exception e) {
-            e.printStackTrace(System.err);
-        } finally {
-            ;
-        }
+        submitQuery(dbQueryTextArea.getText());
     }
 
     void submitQuery(String sql) {
@@ -613,13 +601,18 @@ public class MainUIController implements Initializable {
     private void createMissingRoutes(ActionEvent event) {
         for (Schedules schedule : allSchedulesList) {
             String route = schedule.getRoute();
-            if (route.contains("www.") || route.isEmpty()) {
+            if (route.contains("www.") || route.isEmpty() || route.equalsIgnoreCase("Direct")) {
                 String[] routeInfo = findRoute(schedule.getDepicao(), schedule.getArricao());
+                try{
                 schedule.setRoute(routeInfo[0]);
                 schedule.setNotes(routeInfo[1]);
-                submitQuery("UPDATE schedules SET route = " + schedule.getRoute() +" WHERE id = " + schedule.getId() + ";");
-                submitQuery("UPDATE schedules SET notes = " + schedule.getNotes() +" WHERE id = " + schedule.getId() + ";");
+                submitQuery("UPDATE schedules SET route = '" + schedule.getRoute() +"' WHERE id = " + schedule.getId() + ";");
+                submitQuery("UPDATE schedules SET notes = '" + schedule.getNotes() +"' WHERE id = " + schedule.getId() + ";");
                 System.out.println("Route WDW" + schedule.getFlightnum() + " changed to: " + schedule.getRoute());
+                }
+                catch(ArrayIndexOutOfBoundsException e){
+                    
+                }
             }
         }
     }
@@ -643,22 +636,29 @@ public class MainUIController implements Initializable {
                     line = line.replaceAll("<u></u>", "");
                     route = line;
 
-                    line = in.readLine();
-                    line = line.substring(line.indexOf("class=\"tdcellspacing\">") + 22);
-                    line = line.substring(0, line.indexOf("<</td>"));
-                    notes = line;
+                    try {
+                        line = in.readLine();
+
+                        line = line.substring(line.indexOf("class=\"tdcellspacing\">") + 22);
+                        line = line.substring(0, line.indexOf("</td>"));
+                        line = line.replaceAll("<i></i>", "");
+                        line = line.replaceAll("<b></b>", "");
+                        line = line.replaceAll("<u></u>", "");
+                        notes = line;
+                    } catch (StringIndexOutOfBoundsException e) {
+                    }
+                    String[] toReturn = new String[2];
+                    toReturn[0] = route;
+                    toReturn[1] = notes;
+
+                    return toReturn;
                 }
             }
-            
-            String[] toReturn = new String[2];
-            toReturn[0] = route;
-            toReturn[1] = notes;
-            
-            return toReturn;
+
         } catch (IOException ex) {
             ex.printStackTrace(System.err);
         }
-        return new String[] {"www.rfinder.asalink.net/free/"};
+        return new String[]{"www.rfinder.asalink.net/free/"};
     }
 
 }
