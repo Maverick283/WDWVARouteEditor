@@ -80,6 +80,8 @@ public class ExternalDBManager {
              */
             while ((line = br.readLine()) != null) {
                 String[] entries = line.split(",");
+                Airports instance = new Airports(entries);
+                airportList.add(instance);
 
             }
         } catch (IOException e) {
@@ -101,6 +103,8 @@ public class ExternalDBManager {
              */
             while ((line = br.readLine()) != null) {
                 String[] entries = line.split(",");
+                Airlines instance = new Airlines(entries);
+                airlineList.add(instance);
 
             }
         } catch (IOException e) {

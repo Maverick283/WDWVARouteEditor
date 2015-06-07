@@ -10,5 +10,9 @@ package externalDB;
  * @author Patrick
  */
 public class Airports {
+
+    Airports(String[] entries) {
+        System.out.println("Unsupported Method: Airports at externalDB.Airports"); //To change body of generated methods, choose Tools | Templates.
+    }
     
 }

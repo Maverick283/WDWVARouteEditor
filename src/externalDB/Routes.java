@@ -27,9 +27,22 @@ public class Routes {
         sourceAirport = entries[2];
         sourceAirportID = Integer.parseInt(entries[3]);
         destinationAirport = entries[4];
-        codeshare = entries[5].equalsIgnoreCase("Y");
-        stops = Integer.parseInt(entries[5]);
-        equipment = entries[6].split(" ");
+        destinationAirportID = Integer.parseInt(entries[5]);
+        codeshare = entries[6].equalsIgnoreCase("Y");
+        stops = Integer.parseInt(entries[7]);
+        equipment = entries[8].split(" ");
+    }
+    
+    Routes(String airline, int airlineID, String sourceAirport, int sourceAirportID, String destinationAirport, boolean codeshare, int stops, String[] equipment){
+        this.airline = airline;
+        this.airlineID = airlineID;
+        this.sourceAirport = sourceAirport;
+        this.sourceAirportID = sourceAirportID;
+        this.destinationAirport = destinationAirport;
+        this.destinationAirportID = destinationAirportID;
+        this.codeshare = codeshare;
+        this.stops = stops;
+        this.equipment = equipment;
     }
 
 }
