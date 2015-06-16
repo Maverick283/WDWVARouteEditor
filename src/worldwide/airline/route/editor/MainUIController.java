@@ -19,14 +19,11 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -40,7 +37,6 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.PasswordField;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -55,7 +51,6 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import sql.Acarschat;
 import sql.Aircraft;
-import sql.Airlines;
 import sql.Schedules;
 
 /**
@@ -157,11 +152,18 @@ public class MainUIController implements Initializable {
     private Button submitQueryToDBButton;
     @FXML
     private Button createMissingRoutesButton;
+    @FXML
+    private TableView<Schedules> routeTable;
+    @FXML
+    private Button routesRefreshButton;
+    private RoutesTab routesTab;
+    private SQLHandler sqlHandler;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         new File("/" + calc.getTempPath()).mkdirs();
         errorWindow = new ErrorMessageController(this);
+        sqlHandler = new SQLHandler();
         placeSideLabel(14, 80);
         setConnectingInfoText("");
         dbQueryTextArea.setDisable(true);
@@ -174,9 +176,10 @@ public class MainUIController implements Initializable {
         String AIRPORTS = calc.getTempPath() + "/airports.dat";
         externalDB = new ExternalDBManager(this, ROUTES, AIRPORTS, AIRLINES);
         aircraftTab = new AircraftTab(this, listBox, idLabel, icaoLabel, nameLabel, fullnameLabel, registrationLabel, downloadlinkLabel, imagelinkLabel, rangeLabel, weightLabel, cruiseLabel, maxpaxLabel, maxcargoLabel, minrankLabel, ranklevelLabel, aircraftImage, enabledSlider, toggleAircraftEnabledButton);
-        probelmaticRouteTab = new ProbelmaticRouteTab(problematicRouteTable, this);
+        probelmaticRouteTab = new ProbelmaticRouteTab(problematicRouteTable, this, sqlHandler);
         chatTab = new ChatTab(messageList, showSystemMessagsCheckBox);
         externalDBTab = new ExternalDBTab(this, externalDB.getRoutes(), externalDB.getAirports(), externalDB.getAirlines(), externalDBRoutesTableView, externalDBAirlinesTableView, externalDBAirportsTableView);
+        routesTab = new RoutesTab(this, routeTable,sqlHandler);
 
         allSchedulesList = new ArrayList<Schedules>();
     }
@@ -192,6 +195,7 @@ public class MainUIController implements Initializable {
             createMissingRoutesButton.setDisable(false);
             Platform.runLater(() -> {
                 try {
+                    sqlHandler.setConnection(con);
                     getAircrafts();
                     getChat();
                 } catch (SQLException ex) {
@@ -265,10 +269,8 @@ public class MainUIController implements Initializable {
     }
 
     private void getAircrafts() throws SQLException {
-        Statement stmt = con.createStatement();
-        String sql;
-        sql = "SELECT * FROM aircraft";
-        ResultSet rs = stmt.executeQuery(sql);
+        String sql = "SELECT * FROM aircraft";
+        ResultSet rs = sqlHandler.getResult(sql);
 
         //STEP 5: Extract data from result set
         aircraftList = new ArrayList();
@@ -294,27 +296,24 @@ public class MainUIController implements Initializable {
 
         }
         aircraftTab.createList(aircraftList);
+        getRoutesFromDataBase();
+        routesTab.initTableView(allSchedulesList);
         checkAllRoutesForErrors(aircraftList);
 
         //STEP 6: Clean-up environment
         rs.close();
-        stmt.close();
     }
 
-    private void checkAllRoutesForErrors(ArrayList<Aircraft> aircraftList) {
-        //Checks for Aircraft Compatibility Issues
+    private void getRoutesFromDataBase() {
         try {
-            Statement stmt = con.createStatement();
-            String sql;
-            sql = "SELECT * FROM schedules";
-            ResultSet rs = stmt.executeQuery(sql);
-            faultySchedulesList = new ArrayList();
+            String sql = "SELECT * FROM schedules";
+            ResultSet rs = sqlHandler.getResult(sql);
             //STEP 5: Extract data from result set
             while (rs.next()) {
                 //Retrieve Data                
                 int id = rs.getInt("id");
                 int aircraftID = rs.getInt("aircraft");
-                String distance = rs.getString("distance");
+                float distance = rs.getFloat("distance");
                 String flightnum = rs.getString("flightnum");
                 String depicao = rs.getString("depicao");
                 String arricao = rs.getString("arricao");
@@ -333,55 +332,65 @@ public class MainUIController implements Initializable {
                 int enabled = rs.getInt("enabled");
                 int bidid = rs.getInt("bidid");
 
-                Schedules schedule = new Schedules(id, flightnum, depicao, arricao, route, routeDetails, aircraft, flightlevel, price, deptime, arrtime, flighttime, daysofweek, price, flighttype, timesflown, notes, enabled, bidid);
-                String aircraftNAME = aircraftList.get(aircraftID - 1).getName();
-                //Get Data to a string that can be parsed
-                distance = distance.replaceAll("[^\\d.]", "");
-
-                String range = aircraftList.get(aircraftID - 1).getRange();
-                range = range.replaceAll("[^\\d.]", "");
-                try {
-                    //parse Strings to Ints
-                    int distanceInt = (int) Double.parseDouble(distance);
-                    int rangeInt = (int) Double.parseDouble(range);
-                    //catch Strings like "3000-3400nm" and take the longer range
-                    if (rangeInt > 10000) {
-                        rangeInt = (int) Double.parseDouble(range.substring(3, range.length()));
-
-                    }
-
-                    //compare aircraft range to route distance
-                    if (rangeInt < distanceInt) {
-                        //print message if needed
-
-                        schedule.setIssue("Aircraft can't handle the distance");
-                        faultySchedulesList.add(schedule);
-                        System.out.print("Route distance: " + String.valueOf(distanceInt) + "nm  \t" + "Aircraft type: " + aircraftNAME + "  \tRange of aircraft: " + String.valueOf(rangeInt) + "nm\t");
-                        System.out.println("Route with the ID " + id + " has a Problem!");
-                    }
-                } catch (NumberFormatException e) {
-                    //catches Parse Errors, and outputs the strings that were tried to be parsed.
-                    System.out.println("Error" + distance + "    " + range);
-                }
+                Schedules schedule = new Schedules(id, flightnum, depicao, arricao, route, routeDetails, aircraft, flightlevel, distance, deptime, arrtime, flighttime, daysofweek, price, flighttype, timesflown, notes, enabled, bidid);
 
                 allSchedulesList.add(schedule);
             }
 
             //STEP 6: Clean-up environment
             rs.close();
-            stmt.close();
 
-            //Checks for real World Routes
-            ArrayList<Schedules> nonExcistingSchedules = externalDB.checkForRealRoutes(allSchedulesList);
-            for (Schedules nonExcistingSchedule : nonExcistingSchedules) {
-                nonExcistingSchedule.setIssue("Not a real route");
-            }
-            faultySchedulesList.addAll(nonExcistingSchedules);
-
-            probelmaticRouteTab.createList(faultySchedulesList);
         } catch (SQLException ex) {
             ex.printStackTrace(System.err);
         }
+    }
+
+    private void checkAllRoutesForErrors(ArrayList<Aircraft> aircraftList) {
+        faultySchedulesList = new ArrayList<Schedules>();
+        //Checks for Aircraft Compatibility Issues
+        for (int i = 0; i < allSchedulesList.size(); i++) {
+
+            Schedules current = allSchedulesList.get(i);
+            int aircraftID = Integer.parseInt(current.getAircraft()) - 1;
+            String aircraftNAME = aircraftList.get(aircraftID).getName();
+            float distance = current.getDistance();
+            //Unneccesary String operation. Might use again for locality issues:     distance = distance.replaceAll("[^\\d.]", "");
+
+            String range = aircraftList.get(aircraftID).getRange();
+            range = range.replaceAll("[^\\d.]", "");
+            try {
+                //parse Strings to Ints
+                int distanceInt = (int) distance;
+                int rangeInt = (int) Double.parseDouble(range);
+                //catch Strings like "3000-3400nm" and take the longer range
+                if (rangeInt > 10000) {
+                    rangeInt = (int) Double.parseDouble(range.substring(3, range.length()));
+
+                }
+
+                //compare aircraft range to route distance
+                if (rangeInt < distanceInt) {
+                    //print message if needed
+
+                    current.setIssue("Aircraft can't handle the distance");
+                    faultySchedulesList.add(current);
+                    //System.out.print("Route distance: " + String.valueOf(distanceInt) + "nm  \t" + "Aircraft type: " + aircraftNAME + "  \tRange of aircraft: " + String.valueOf(rangeInt) + "nm\t");
+                    //System.out.println("Route with the ID " + id + " has a Problem!");
+                }
+            } catch (NumberFormatException e) {
+                //catches Parse Errors, and outputs the strings that were tried to be parsed.
+                System.out.println("Error" + distance + "    " + range);
+            }
+        }
+
+        //Checks for real World Routes
+        ArrayList<Schedules> nonExcistingSchedules = externalDB.checkForRealRoutes(allSchedulesList);
+        for (Schedules nonExcistingSchedule : nonExcistingSchedules) {
+            nonExcistingSchedule.setIssue("Not a real route");
+        }
+        faultySchedulesList.addAll(nonExcistingSchedules);
+
+        probelmaticRouteTab.createList(faultySchedulesList);
     }
 
     private void checkLogin() {
@@ -514,7 +523,7 @@ public class MainUIController implements Initializable {
 
     void disconnectFromDB() {
         try {
-            con.close();
+            sqlHandler.closeConnection();
             connectToDBButton.setText("Connect to databse");
             connectingInfoLabel.setText("Disconnected");
             loginStatusLabel.setText("Not looged in!");
@@ -538,10 +547,8 @@ public class MainUIController implements Initializable {
     }
 
     private void getChat() throws SQLException {
-        Statement stmt = con.createStatement();
-        String sql;
-        sql = "SELECT * FROM acarschat";
-        ResultSet rs = stmt.executeQuery(sql);
+        String sql = "SELECT * FROM acarschat";
+        ResultSet rs = sqlHandler.getResult(sql);
 
         //STEP 5: Extract data from result set
         chatList = new ArrayList();
@@ -588,10 +595,7 @@ public class MainUIController implements Initializable {
 
     void submitQuery(String sql) {
         try {
-            Statement stat = con.createStatement();
-            stat.executeUpdate(sql);
-            System.out.println(sql);
-            stat.close();
+            sqlHandler.submitQuery(sql);
         } catch (SQLException ex) {
             ex.printStackTrace(System.err);
         }
@@ -603,15 +607,14 @@ public class MainUIController implements Initializable {
             String route = schedule.getRoute();
             if (route.contains("www.") || route.isEmpty() || route.equalsIgnoreCase("Direct")) {
                 String[] routeInfo = findRoute(schedule.getDepicao(), schedule.getArricao());
-                try{
-                schedule.setRoute(routeInfo[0]);
-                schedule.setNotes(routeInfo[1]);
-                submitQuery("UPDATE schedules SET route = '" + schedule.getRoute() +"' WHERE id = " + schedule.getId() + ";");
-                submitQuery("UPDATE schedules SET notes = '" + schedule.getNotes() +"' WHERE id = " + schedule.getId() + ";");
-                System.out.println("Route WDW" + schedule.getFlightnum() + " changed to: " + schedule.getRoute());
-                }
-                catch(ArrayIndexOutOfBoundsException e){
-                    
+                try {
+                    schedule.setRoute(routeInfo[0]);
+                    schedule.setNotes(routeInfo[1]);
+                    submitQuery("UPDATE schedules SET route = '" + schedule.getRoute() + "' WHERE id = " + schedule.getId() + ";");
+                    submitQuery("UPDATE schedules SET notes = '" + schedule.getNotes() + "' WHERE id = " + schedule.getId() + ";");
+                    System.out.println("Route WDW" + schedule.getFlightnum() + " changed to: " + schedule.getRoute());
+                } catch (ArrayIndexOutOfBoundsException e) {
+
                 }
             }
         }
@@ -620,12 +623,12 @@ public class MainUIController implements Initializable {
     private String[] findRoute(String depicao, String arricao) {
         try {
             String line = "";
+            String route = "";
+            String notes = "";
             URL myUrl = null;
             BufferedReader in = null;
             myUrl = new URL("http://www.vatroute.net/web_showfp.php?dep=" + depicao + "&dest=" + arricao);
             in = new BufferedReader(new InputStreamReader(myUrl.openStream()));
-            String route = "";
-            String notes = "";
             while ((line = in.readLine()) != null) {
                 //System.out.println(line);
                 if (line.contains("class=\"tdcellspacing-right\">")) {
@@ -659,6 +662,11 @@ public class MainUIController implements Initializable {
             ex.printStackTrace(System.err);
         }
         return new String[]{"www.rfinder.asalink.net/free/"};
+    }
+
+    @FXML
+    private void refreshRoutes(ActionEvent event) {
+        getRoutesFromDataBase();
     }
 
 }

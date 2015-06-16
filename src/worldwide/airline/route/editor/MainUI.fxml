@@ -122,9 +122,32 @@
                      <content>
                         <AnchorPane prefHeight="538.0" prefWidth="1000.0">
                            <children>
+                              <TableView fx:id="routeTable" editable="true" prefHeight="418.0" prefWidth="980.0" AnchorPane.bottomAnchor="25.0" AnchorPane.leftAnchor="6.0" AnchorPane.rightAnchor="6.0" AnchorPane.topAnchor="95.0">
+                                 <columns>
+                                    <TableColumn prefWidth="40.0" text="ID" />
+                                    <TableColumn prefWidth="40.0" text="CODE" />
+                                    <TableColumn text="FLIGHTNUM" />
+                                    <TableColumn prefWidth="60.0" text="DEPICAO" />
+                                    <TableColumn prefWidth="60.0" text="ARRICAO" />
+                                    <TableColumn prefWidth="44.0" text="ROUTE" />
+                                    <TableColumn prefWidth="52.0" text="DETAILS" />
+                                    <TableColumn prefWidth="62.0" text="AIRCRAFT" />
+                                    <TableColumn prefWidth="67.0" text="FLIGHTLVL" />
+                                    <TableColumn prefWidth="63.0" text="DISTANCE" />
+                                    <TableColumn prefWidth="56.0" text="DEPTIME" />
+                                    <TableColumn prefWidth="57.0" text="ARRTIME" />
+                                    <TableColumn prefWidth="74.0" text="FLIGHTTIME" />
+                                    <TableColumn prefWidth="36.0" text="DOW" />
+                                    <TableColumn prefWidth="37.0" text="PRICE" />
+                                    <TableColumn prefWidth="33.0" text="TYPE" />
+                                    <TableColumn prefWidth="83.0" text="TIMESFLOWN" />
+                                    <TableColumn minWidth="0.0" prefWidth="43.0" text="NOTES" />
+                                    <TableColumn minWidth="6.0" prefWidth="60.0" text="ENABLED" />
+                                    <TableColumn minWidth="0.0" prefWidth="43.0" text="ISSUES" />
+                                 </columns>
+                              </TableView>
                               <Button layoutX="100.0" layoutY="37.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="84.0" text="Update DB" />
-                              <Button layoutX="26.0" layoutY="37.0" mnemonicParsing="false" text="Refresh" />
-                              <WebView layoutX="400.0" layoutY="113.0" prefHeight="416.0" prefWidth="988.0" AnchorPane.leftAnchor="6.0" AnchorPane.rightAnchor="6.0" />
+                              <Button fx:id="routesRefreshButton" layoutX="26.0" layoutY="37.0" mnemonicParsing="false" onAction="#refreshRoutes" text="Refresh" />
                            </children>
                         </AnchorPane>
                      </content>

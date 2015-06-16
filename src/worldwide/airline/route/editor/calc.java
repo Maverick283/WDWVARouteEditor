@@ -111,14 +111,14 @@ public class calc {
     }
 
     /**
-     * Saves the file from the specified link to the destination File. 
-     * Returns false if an error occured
-     * 
+     * Saves the file from the specified link to the destination File. Returns
+     * false if an error occured
+     *
      * @param fileURL
      * @param destinationFile
      * @return operation successfull
      */
-    static boolean saveFile(String fileURL, String destinationFile){
+    static boolean saveFile(String fileURL, String destinationFile) {
         try {
             URL url = new URL(fileURL);
 
@@ -135,18 +135,17 @@ public class calc {
             is.close();
             os.close();
             return true;
-        }
-        catch(Exception e){
+        } catch (Exception e) {
             return false;
         }
     }
-    
-    static StringConverter<Integer> getStringConverterToInt(){
+
+    static StringConverter<Integer> getStringConverterToInt() {
         StringConverter<Integer> toReturn = new StringConverter<Integer>() {
 
             @Override
             public String toString(Integer object) {
-                return String.valueOf(object);                
+                return String.valueOf(object);
             }
 
             @Override
@@ -155,5 +154,82 @@ public class calc {
             }
         };
         return toReturn;
+    }
+
+    static String getDuration(String startingTime, String endingTime) throws NumberFormatException {
+        String startingTimeZone = getTimeZoneFromString(startingTime);
+        String endingTimeZone = getTimeZoneFromString(endingTime);
+        if (startingTimeZone.equalsIgnoreCase(endingTimeZone)) {
+            int startingTimeInt = getTimeFromString(startingTime);
+            int endingTimeInt = getTimeFromString(endingTime);
+            int duration = endingTimeInt - startingTimeInt;
+            return getStringFromTime(duration);
+        } else {
+            throw new NumberFormatException("The Timezones of " + startingTime + " and " + endingTime + " are not equal. Thus the duration could not be calculated");
+        }
+    }
+
+    static String getTimePlusDuration(String startingTime, Float duration) {
+        int starting = getTimeFromString(startingTime);
+        String timeZone = getTimeZoneFromString(startingTime);
+        int durationInt = getTimeIntFromFloat(duration);
+        int endTime = (int) (starting + durationInt);
+        return getStringFromTime(endTime, timeZone);
+    }
+
+    static String getTimeMinusDuration(String endingTime, Float duration) {
+        int ending = getTimeFromString(endingTime);
+        String endingtimeZone = getTimeZoneFromString(endingTime);
+        int durationInt = getTimeIntFromFloat(duration);
+        int startTime = (int) (ending - durationInt);
+        return getStringFromTime(startTime, endingtimeZone);
+    }
+
+    static int getTimeFromString(String toConvert) {
+        String hourString = toConvert.substring(0, toConvert.indexOf(":"));
+        toConvert = toConvert.substring(toConvert.indexOf(":")+1);
+        String minuteString = toConvert.substring(0, 2);
+        int hour = Integer.parseInt(hourString);
+        int minute = Integer.parseInt(minuteString);
+        return (hour * 60) + minute;
+    }
+
+    static String getTimeZoneFromString(String timeWithTimeZone) {
+        String timeZone = timeWithTimeZone.replaceAll("[0-9:]+", "");
+        timeZone = timeZone.trim();
+        return timeZone;
+    }
+
+    static String getStringFromTime(int time) {
+        int hours = 0;
+        int minutes = 0;
+        while (time >= 60) {
+            time = time - 60;
+            hours++;
+        }
+        minutes = time;
+        return String.valueOf(hours) + ":" + String.valueOf(minutes);
+    }
+
+    static String getStringFromTime(int endTime, String timeZone) {
+        return getStringFromTime(endTime) + " " + timeZone.trim();
+    }
+    
+    static String getFlightTimeFromString(String flightTime){
+        flightTime = flightTime.replaceAll(":", ".");
+        flightTime = flightTime.replaceAll("[^\\d.]", "");
+        return flightTime;
+    }
+
+    static int getTimeIntFromFloat(Float duration) {
+        int hour = 0;
+        int min = 0;
+        duration = duration * 100;
+        while(duration >= 100){
+            duration = duration -100;
+            hour ++;
+        }
+        min = duration.intValue();
+        return (hour * 60) + min;
     }
 }

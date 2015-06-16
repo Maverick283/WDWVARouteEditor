@@ -134,8 +134,8 @@ public class Schedules implements Serializable {
         this.aircraft = aircraft;
         this.flightlevel = flightlevel;
         this.distance = distance;
-        this.deptime = deptime;
-        this.arrtime = arrtime;
+        this.deptime = deptime.trim().replaceAll("\\d([A-Z])", "$0 $1");
+        this.arrtime = arrtime.trim().replaceAll("\\d([A-Z])", "$0 $1");
         this.flighttime = flighttime;
         this.daysofweek = daysofweek;
         this.price = price;
