@@ -34,13 +34,18 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.PasswordField;
+import javafx.scene.control.ScrollBar;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -158,6 +163,58 @@ public class MainUIController implements Initializable {
     private Button routesRefreshButton;
     private RoutesTab routesTab;
     private SQLHandler sqlHandler;
+    @FXML
+    private Label addFlightnumLabel;
+    @FXML
+    private ScrollBar addFlightNumScrollBar;
+    @FXML
+    private TextField addDepICAOTextArea;
+    @FXML
+    private TextField addArrICAOTextArea;
+    @FXML
+    private TextArea addRouteTextArea;
+    @FXML
+    private ComboBox<?> addFlightlevelComboBox;
+    @FXML
+    private TextField addDistanceTextField;
+    @FXML
+    private TextField addPriceTextField;
+    @FXML
+    private ChoiceBox<?> addFlighttypeComboBox;
+    @FXML
+    private TextField addDepTimeHourTextField;
+    @FXML
+    private TextField addDepTimeMinutesTextArea;
+    @FXML
+    private ComboBox<?> addDepTimeZoneComboBox;
+    @FXML
+    private TextField addFlighttimeTextArea;
+    @FXML
+    private VBox addSchedulesAirplaneVBox;
+    @FXML
+    private CheckBox addDOWAllCheckBox;
+    @FXML
+    private CheckBox addDOWMondayCheckBox;
+    @FXML
+    private CheckBox addDOWThursdayCheckBox;
+    @FXML
+    private CheckBox addDOWWednesdayCheckBox;
+    @FXML
+    private CheckBox addDOWTuesdayCheckBox;
+    @FXML
+    private CheckBox addDOWSaturdayCheckBox;
+    @FXML
+    private CheckBox addDOWFridayCheckBox;
+    @FXML
+    private CheckBox addDOWSundayCheckBox;
+    @FXML
+    private Button addAddScheduleButton;
+    @FXML
+    private Button clearScheduleButton;
+    @FXML
+    private Label addScheduleMessageLabel;
+
+    AddTab addTab;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -175,11 +232,16 @@ public class MainUIController implements Initializable {
         String AIRLINES = calc.getTempPath() + "/airlines.dat";
         String AIRPORTS = calc.getTempPath() + "/airports.dat";
         externalDB = new ExternalDBManager(this, ROUTES, AIRPORTS, AIRLINES);
-        aircraftTab = new AircraftTab(this, listBox, idLabel, icaoLabel, nameLabel, fullnameLabel, registrationLabel, downloadlinkLabel, imagelinkLabel, rangeLabel, weightLabel, cruiseLabel, maxpaxLabel, maxcargoLabel, minrankLabel, ranklevelLabel, aircraftImage, enabledSlider, toggleAircraftEnabledButton);
+        aircraftTab = new AircraftTab(this, listBox, idLabel, icaoLabel, nameLabel, fullnameLabel, registrationLabel, downloadlinkLabel, imagelinkLabel,
+                rangeLabel, weightLabel, cruiseLabel, maxpaxLabel, maxcargoLabel, minrankLabel, ranklevelLabel, aircraftImage, enabledSlider, toggleAircraftEnabledButton);
         probelmaticRouteTab = new ProbelmaticRouteTab(problematicRouteTable, this, sqlHandler);
         chatTab = new ChatTab(messageList, showSystemMessagsCheckBox);
         externalDBTab = new ExternalDBTab(this, externalDB.getRoutes(), externalDB.getAirports(), externalDB.getAirlines(), externalDBRoutesTableView, externalDBAirlinesTableView, externalDBAirportsTableView);
-        routesTab = new RoutesTab(this, routeTable,sqlHandler);
+        routesTab = new RoutesTab(this, routeTable, sqlHandler);
+        addTab = new AddTab(this, sqlHandler, addDepICAOTextArea, addArrICAOTextArea, addAddScheduleButton, clearScheduleButton, addDOWAllCheckBox, addDOWFridayCheckBox,
+                addDOWMondayCheckBox, addDOWSaturdayCheckBox, addDOWSundayCheckBox, addDOWThursdayCheckBox, addDOWTuesdayCheckBox, addDOWWednesdayCheckBox,
+                addDepTimeHourTextField, addDepTimeMinutesTextArea, addDepTimeZoneComboBox, addDistanceTextField, addFlightNumScrollBar, addFlightlevelComboBox,
+                addFlightnumLabel, addFlighttimeTextArea, addFlighttypeComboBox, addPriceTextField, addRouteTextArea, addScheduleMessageLabel, addSchedulesAirplaneVBox);
 
         allSchedulesList = new ArrayList<Schedules>();
     }
@@ -667,6 +729,22 @@ public class MainUIController implements Initializable {
     @FXML
     private void refreshRoutes(ActionEvent event) {
         getRoutesFromDataBase();
+    }
+
+    @FXML
+    private void addFlightnumberScrolled(ScrollEvent event) {
+    }
+
+    @FXML
+    private void checkAllDOWCheckboxes(ActionEvent event) {
+    }
+
+    @FXML
+    private void addSchedule(ActionEvent event) {
+    }
+
+    @FXML
+    private void clearSchedule(ActionEvent event) {
     }
 
 }
