@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -165,7 +166,6 @@ public class MainUIController implements Initializable {
     private SQLHandler sqlHandler;
     @FXML
     private Label addFlightnumLabel;
-    @FXML
     private ScrollBar addFlightNumScrollBar;
     @FXML
     private TextField addDepICAOTextArea;
@@ -174,19 +174,19 @@ public class MainUIController implements Initializable {
     @FXML
     private TextArea addRouteTextArea;
     @FXML
-    private ComboBox<?> addFlightlevelComboBox;
+    private ComboBox<String> addFlightlevelComboBox;
     @FXML
     private TextField addDistanceTextField;
     @FXML
     private TextField addPriceTextField;
     @FXML
-    private ChoiceBox<?> addFlighttypeComboBox;
+    private ChoiceBox<String> addFlighttypeComboBox;
     @FXML
     private TextField addDepTimeHourTextField;
     @FXML
     private TextField addDepTimeMinutesTextArea;
     @FXML
-    private ComboBox<?> addDepTimeZoneComboBox;
+    private ChoiceBox<String> addDepTimeZoneComboBox;
     @FXML
     private TextField addFlighttimeTextArea;
     @FXML
@@ -260,6 +260,7 @@ public class MainUIController implements Initializable {
                     sqlHandler.setConnection(con);
                     getAircrafts();
                     getChat();
+                    addTab.initWithData();
                 } catch (SQLException ex) {
                     setConnectingInfoText("Error!");
                     ex.printStackTrace(System.err);
@@ -682,13 +683,15 @@ public class MainUIController implements Initializable {
         }
     }
 
-    private String[] findRoute(String depicao, String arricao) {
+    public String[] findRoute(String depicao, String arricao) {
         try {
             String line = "";
             String route = "";
             String notes = "";
+            String distance = "";
             URL myUrl = null;
             BufferedReader in = null;
+            String[] toReturn = new String[3];
             myUrl = new URL("http://www.vatroute.net/web_showfp.php?dep=" + depicao + "&dest=" + arricao);
             in = new BufferedReader(new InputStreamReader(myUrl.openStream()));
             while ((line = in.readLine()) != null) {
@@ -712,18 +715,25 @@ public class MainUIController implements Initializable {
                         notes = line;
                     } catch (StringIndexOutOfBoundsException e) {
                     }
-                    String[] toReturn = new String[2];
                     toReturn[0] = route;
                     toReturn[1] = notes;
-
-                    return toReturn;
+                }
+                if (line.contains("Great circle distance:")) {
+                    distance = line.substring(line.indexOf("Great circle distance:</b>") + 26, line.length() - 5).trim();
+                    toReturn[2] = distance;
                 }
             }
+            if (route.isEmpty() || distance.isEmpty()) {
+                return new String[]{"www.rfinder.asalink.net/free/"};
+            }
+
+            return toReturn;
 
         } catch (IOException ex) {
             ex.printStackTrace(System.err);
         }
-        return new String[]{"www.rfinder.asalink.net/free/"};
+        return new String[]{"www.rfinder.asalink.net/free/"
+        };
     }
 
     @FXML
@@ -732,19 +742,45 @@ public class MainUIController implements Initializable {
     }
 
     @FXML
-    private void addFlightnumberScrolled(ScrollEvent event) {
-    }
-
-    @FXML
     private void checkAllDOWCheckboxes(ActionEvent event) {
+        addTab.checkAllDOWChecboxes(event);
     }
 
     @FXML
     private void addSchedule(ActionEvent event) {
+        Schedules newSchedule = addTab.addSchedule(event);
     }
 
     @FXML
     private void clearSchedule(ActionEvent event) {
+        addTab.clearSchedule(event);
+    }
+
+    ArrayList getAllUnavailFlightnum() {
+        ArrayList<Integer> toReturn = new ArrayList<>();
+        try {
+            for (Schedules schedule : allSchedulesList) {
+                toReturn.add(Integer.parseInt(schedule.getFlightnum()));
+            }
+        } catch (NullPointerException e) {
+
+        }
+        return toReturn;
+    }
+
+    @FXML
+    private void addFlightNumberUp(ActionEvent event) {
+        addTab.flightnumberUp(event);
+    }
+
+    @FXML
+    private void addFlightNumberDown(ActionEvent event) {
+        addTab.flightnumberDown(event);
+    }
+
+    @FXML
+    private void addICAOEntered(Event event) {
+        addTab.iCAOEntered(event);
     }
 
 }

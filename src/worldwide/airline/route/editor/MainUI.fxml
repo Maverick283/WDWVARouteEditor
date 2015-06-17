@@ -302,7 +302,12 @@
                                                       <HBox alignment="CENTER_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="20.0" prefWidth="100.0" spacing="5.0" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
                                                          <children>
                                                             <Label fx:id="addFlightnumLabel" text="-001" />
-                                                            <ScrollBar fx:id="addFlightNumScrollBar" maxHeight="-Infinity" minHeight="-Infinity" onScroll="#addFlightnumberScrolled" orientation="VERTICAL" prefHeight="20.0" />
+                                                            <VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="20.0" prefWidth="30.0">
+                                                               <children>
+                                                                  <Button maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#addFlightNumberUp" prefHeight="20.0" prefWidth="30.0" text="˄" />
+                                                                  <Button maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#addFlightNumberDown" prefHeight="20.0" prefWidth="30.0" text="˅" />
+                                                               </children>
+                                                            </VBox>
                                                          </children>
                                                       </HBox>
                                                       <Label text="Departure ICAO:" GridPane.rowIndex="1" />
@@ -314,8 +319,8 @@
                                                       <Label text="Flighttime:" GridPane.rowIndex="7" />
                                                       <Label text="Price:" GridPane.rowIndex="8" />
                                                       <Label text="Flighttype:" GridPane.rowIndex="9" />
-                                                      <TextField fx:id="addDepICAOTextArea" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                                                      <TextField fx:id="addArrICAOTextArea" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                                      <TextField fx:id="addDepICAOTextArea" onAction="#addICAOEntered" onKeyTyped="#addICAOEntered" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                                      <TextField fx:id="addArrICAOTextArea" onAction="#addICAOEntered" onKeyTyped="#addICAOEntered" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                                                       <TextArea fx:id="addRouteTextArea" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                                                       <ComboBox fx:id="addFlightlevelComboBox" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
                                                       <TextField fx:id="addDistanceTextField" GridPane.columnIndex="1" GridPane.rowIndex="5" />
@@ -330,13 +335,13 @@
                                                                </font>
                                                             </Label>
                                                             <TextField fx:id="addDepTimeMinutesTextArea" promptText="MM" />
-                                                            <ComboBox fx:id="addDepTimeZoneComboBox" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="55.0" />
+                                                            <ChoiceBox fx:id="addDepTimeZoneComboBox" prefWidth="150.0" />
                                                          </children>
                                                       </HBox>
                                                       <TextField fx:id="addFlighttimeTextArea" promptText="Format: HH:MM" GridPane.columnIndex="1" GridPane.rowIndex="7" />
                                                    </children>
                                                 </GridPane>
-                                                <ScrollPane hbarPolicy="NEVER" layoutX="319.0" layoutY="55.0" prefHeight="250.0" prefWidth="250.0" vbarPolicy="ALWAYS">
+                                                <ScrollPane hbarPolicy="NEVER" layoutX="319.0" layoutY="55.0" maxHeight="250.0" minHeight="0.0" prefWidth="250.0">
                                                    <content>
                                                       <VBox fx:id="addSchedulesAirplaneVBox" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="236.0" />
                                                    </content>

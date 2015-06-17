@@ -14,6 +14,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import javafx.util.StringConverter;
 
 /**
@@ -187,7 +188,7 @@ public class calc {
 
     static int getTimeFromString(String toConvert) {
         String hourString = toConvert.substring(0, toConvert.indexOf(":"));
-        toConvert = toConvert.substring(toConvert.indexOf(":")+1);
+        toConvert = toConvert.substring(toConvert.indexOf(":") + 1);
         String minuteString = toConvert.substring(0, 2);
         int hour = Integer.parseInt(hourString);
         int minute = Integer.parseInt(minuteString);
@@ -214,8 +215,8 @@ public class calc {
     static String getStringFromTime(int endTime, String timeZone) {
         return getStringFromTime(endTime) + " " + timeZone.trim();
     }
-    
-    static String getFlightTimeFromString(String flightTime){
+
+    static String getFlightTimeFromString(String flightTime) {
         flightTime = flightTime.replaceAll(":", ".");
         flightTime = flightTime.replaceAll("[^\\d.]", "");
         return flightTime;
@@ -225,11 +226,21 @@ public class calc {
         int hour = 0;
         int min = 0;
         duration = duration * 100;
-        while(duration >= 100){
-            duration = duration -100;
-            hour ++;
+        while (duration >= 100) {
+            duration = duration - 100;
+            hour++;
         }
         min = duration.intValue();
         return (hour * 60) + min;
+    }
+
+    static boolean isIntPartOfArray(int toCheck, ArrayList<Integer> array) {
+        boolean toReturn = false;
+        for (Integer array1 : array) {
+            if (toCheck == array1) {
+                toReturn = true;
+            }
+        }
+        return toReturn;
     }
 }
