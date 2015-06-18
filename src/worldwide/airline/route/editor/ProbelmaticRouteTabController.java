@@ -21,7 +21,7 @@ import sql.Schedules;
  *
  * @author Patrick
  */
-public class ProbelmaticRouteTab {
+public class ProbelmaticRouteTabController {
 
     TableView<Schedules> problematicRouteTable;
     TableColumn id;
@@ -47,7 +47,7 @@ public class ProbelmaticRouteTab {
     private final MainUIController father;
     private final SQLHandler sqlHandler;
 
-    ProbelmaticRouteTab(TableView<Schedules> problematicRouteTable, MainUIController father, SQLHandler sqlHandler) {
+    ProbelmaticRouteTabController(TableView<Schedules> problematicRouteTable, MainUIController father, SQLHandler sqlHandler) {
         this.father = father;
         this.sqlHandler = sqlHandler;
         this.problematicRouteTable = problematicRouteTable;

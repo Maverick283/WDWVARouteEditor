@@ -20,7 +20,7 @@ import sql.Schedules;
  *
  * @author Patrick
  */
-public class ExternalDBTab {
+public class ExternalDBTabController {
 
     private final MainUIController father;
     private final ArrayList routes;
@@ -30,7 +30,7 @@ public class ExternalDBTab {
     private final TableView<Airlines> airlineTableView;
     private final TableView<Airports> airportTableView;
 
-    ExternalDBTab(MainUIController father, ArrayList routes, ArrayList airports, ArrayList airlines, TableView<Routes> routesTableView, TableView<Airlines> airlineTableView, TableView<Airports> airportTableView) {
+    ExternalDBTabController(MainUIController father, ArrayList routes, ArrayList airports, ArrayList airlines, TableView<Routes> routesTableView, TableView<Airlines> airlineTableView, TableView<Airports> airportTableView) {
         this.father = father;
         this.routes = routes;
         this.airports = airports;

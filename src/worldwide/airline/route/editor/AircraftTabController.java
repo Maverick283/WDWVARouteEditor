@@ -21,7 +21,7 @@ import sql.Aircraft;
  *
  * @author Patrick
  */
-public class AircraftTab {
+public class AircraftTabController {
 
     private final Label idLabel;
     private final Label icaoLabel;
@@ -47,7 +47,7 @@ public class AircraftTab {
 
     HBox currentlyDisplayedHBox;
 
-    AircraftTab(MainUIController father, VBox listBox, Label idLabel, Label icaoLabel, Label nameLabel, Label fullnameLabel, Label registrationLabel, Label downloadlinkLabel, Label imagelinkLabel, Label rangeLabel, Label weightLabel, Label cruiseLabel, Label maxpaxLabel, Label maxcargoLabel, Label minrankLabel, Label ranklevelLabel, ImageView aircraftImage, Slider enabledSlider, Button toggleAircraftEnabledButton) {
+    AircraftTabController(MainUIController father, VBox listBox, Label idLabel, Label icaoLabel, Label nameLabel, Label fullnameLabel, Label registrationLabel, Label downloadlinkLabel, Label imagelinkLabel, Label rangeLabel, Label weightLabel, Label cruiseLabel, Label maxpaxLabel, Label maxcargoLabel, Label minrankLabel, Label ranklevelLabel, ImageView aircraftImage, Slider enabledSlider, Button toggleAircraftEnabledButton) {
         this.father = father;
         this.listBox = listBox;
         this.idLabel = idLabel;

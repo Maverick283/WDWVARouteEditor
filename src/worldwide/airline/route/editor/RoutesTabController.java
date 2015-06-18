@@ -33,7 +33,7 @@ import sql.Schedules;
  *
  * @author Eduards
  */
-public class RoutesTab {
+public class RoutesTabController {
 
     private final MainUIController father;
     TableView<Schedules> routeTable;
@@ -59,7 +59,7 @@ public class RoutesTab {
     TableColumn issue;
     private final SQLHandler sqlHandler;
 
-    RoutesTab(MainUIController father, TableView<Schedules> routeTable, SQLHandler sqlHandler) {
+    RoutesTabController(MainUIController father, TableView<Schedules> routeTable, SQLHandler sqlHandler) {
         this.father = father;
         this.routeTable = routeTable;
         this.sqlHandler = sqlHandler;

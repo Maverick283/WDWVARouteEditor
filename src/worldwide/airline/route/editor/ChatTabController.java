@@ -23,13 +23,13 @@ import sql.Acarschat;
  *
  * @author Patrick
  */
-public class ChatTab {
+public class ChatTabController {
 
     ListView messageList;
     ArrayList<Acarschat> chatList;
     private final CheckBox showSystemMessagsCheckBox;
 
-    public ChatTab(ListView messageList, CheckBox showSystemMessagsCheckBox) {
+    public ChatTabController(ListView messageList, CheckBox showSystemMessagsCheckBox) {
         this.messageList = messageList;
         this.showSystemMessagsCheckBox = showSystemMessagsCheckBox;
 

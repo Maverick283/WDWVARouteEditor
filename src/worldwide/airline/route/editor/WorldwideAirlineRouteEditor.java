@@ -10,6 +10,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
@@ -28,6 +29,10 @@ public class WorldwideAirlineRouteEditor extends Application {
         Scene scene = new Scene(root);
 
         stage.setScene(scene);
+        
+        stage.getIcons().add(new Image(getClass().getResourceAsStream("icon.png")));
+        stage.setTitle("ACARS® Database Manager (Worldwide Airlines®)");
+        
         stage.show();
         stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
             public void handle(WindowEvent we) {

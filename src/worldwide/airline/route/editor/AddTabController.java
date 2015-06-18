@@ -15,11 +15,8 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollBar;
-import javafx.scene.control.Separator;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import sql.Aircraft;
@@ -29,7 +26,7 @@ import sql.Schedules;
  *
  * @author Patrick
  */
-public class AddTab {
+public class AddTabController {
 
     private final MainUIController father;
     private final SQLHandler sqlHandler;
@@ -62,8 +59,9 @@ public class AddTab {
     int selectedFlightNum;
     ArrayList<Integer> takenFlightnums;
     ArrayList<CheckBox> aircraftCheckBoxList;
+    CheckBox[] checkBoxes;
 
-    AddTab(MainUIController father, SQLHandler sqlHandler, TextField DepICAOTextArea, TextField ArrICAOTextArea, Button AddScheduleButton, Button ClearScheduleButton,
+    AddTabController(MainUIController father, SQLHandler sqlHandler, TextField DepICAOTextArea, TextField ArrICAOTextArea, Button AddScheduleButton, Button ClearScheduleButton,
             CheckBox DOWAllCheckBox, CheckBox DOWFridayCheckBox, CheckBox DOWMondayCheckBox, CheckBox DOWSaturdayCheckBox, CheckBox DOWSundayCheckBox,
             CheckBox DOWThursdayCheckBox, CheckBox DOWTuesdayCheckBox, CheckBox DOWWednesdayCheckBox, TextField DepTimeHourTextField,
             TextField DepTimeMinutesTextArea, ChoiceBox<String> DepTimeZoneComboBox, TextField DistanceTextField, ScrollBar FlightNumScrollBar, ComboBox<String> FlightlevelComboBox,
@@ -98,6 +96,7 @@ public class AddTab {
         this.clearScheduleButton = ClearScheduleButton;
 
         takenFlightnums = new ArrayList<>();
+        checkBoxes = new CheckBox[]{dOWMondayCheckBox, dOWTuesdayCheckBox, dOWWednesdayCheckBox, dOWThursdayCheckBox, dOWFridayCheckBox, dOWSaturdayCheckBox, dOWSundayCheckBox};
 
     }
 
@@ -184,18 +183,58 @@ public class AddTab {
 
     void checkAllDOWChecboxes(ActionEvent event) {
         boolean selectAll = dOWAllCheckBox.isSelected();
-        dOWMondayCheckBox.setSelected(selectAll);
-        dOWTuesdayCheckBox.setSelected(selectAll);
-        dOWWednesdayCheckBox.setSelected(selectAll);
-        dOWThursdayCheckBox.setSelected(selectAll);
-        dOWFridayCheckBox.setSelected(selectAll);
-        dOWSaturdayCheckBox.setSelected(selectAll);
-        dOWSundayCheckBox.setSelected(selectAll);
+        for (CheckBox checkBoxe : checkBoxes) {
+            checkBoxe.setSelected(selectAll);
+        }
     }
 
-    Schedules addSchedule(ActionEvent event) {
-        System.out.println("Unsupported Method: addSchedule at worldwide.airline.route.editor.AddTab"); //To change body of generated methods, choose Tools | Templates.
-        return null;
+    boolean addSchedule(ActionEvent event) {
+        String[] fi = new String[14]; //flightinfo
+        /*
+         0 = flightnum
+         1 = depicao
+         2 = arricao
+         3 = route
+         4 = route_details
+         5 = aircraft
+         6 = flightlevel
+         7 = distance
+         8 = deptime
+         9 = arrtime
+         10 = flighttime
+         11 = daysofweek
+         12 = price
+         13 = flighttype
+         */
+        fi[0] = getFlightnum();
+        fi[1] = getDepICAO();
+        fi[2] = getArrICAO();
+        fi[3] = getRoute();
+        fi[4] = "NA"; //No route details!
+        fi[5] = getAircraft();
+        fi[6] = getFlightlevelInFeet();
+        fi[7] = String.valueOf(getDistance());
+        fi[8] = getDepTime();
+        fi[9] = getArrTime();
+        fi[10] = String.valueOf(getFlighttime());
+        fi[11] = getDOW();
+        fi[12] = String.valueOf(getPrice());
+        fi[13] = getFlighttype();
+        boolean allDataAvail = true;
+        for (int i = 0; i < fi.length; i++) {
+            if (fi[i].isEmpty()) {
+                allDataAvail = false;
+            }
+        }
+
+        if (allDataAvail) {
+            sqlHandler.executeQuery("INSERT INTO wdwvacom_wdw.schedules (code, flightnum, depicao, arricao, route, route_details, aircraft, flightlevel, distance, deptime, arrtime, flighttime, daysofweek, price, flighttype, timesflown, notes, enabled, bidid) \n"
+                    + "	VALUES ('WDW', '" + fi[0] + "', '" + fi[1] + "', '" + fi[2] + "', '" + fi[3] + "', '" + fi[4] + "', '" + fi[5] + "', '" + fi[6] + "', " + fi[7] + ", '" + fi[8] + "', '" + fi[9] + "', " + fi[10] + ", '" + fi[11] + "', " + fi[12] + ", '" + fi[13] + "', DEFAULT, '', DEFAULT, DEFAULT);");
+            return true;
+        } else {
+            System.out.println("Please enter all data!");
+            return false;
+        }
     }
 
     void clearSchedule(ActionEvent event) {
@@ -214,20 +253,146 @@ public class AddTab {
             if (depICAO.length() == 4 && arrICAO.length() == 4) {
                 depICAOTextArea.setText(depICAOTextArea.getText().toUpperCase());
                 arrICAOTextArea.setText(arrICAOTextArea.getText().toUpperCase());
-                searchRouteInformation(depICAO,arrICAO);
+                searchRouteInformation(depICAO, arrICAO);
             }
 
         }
     }
 
     private void searchRouteInformation(String depICAO, String arrICAO) {
-        String [] routeInfo = father.findRoute(depICAO, arrICAO);
-        try{
-            routeTextArea.setText(routeInfo[0]);
-            distanceTextField.setText(routeInfo[2]);
-        }catch(ArrayIndexOutOfBoundsException e){
-            routeTextArea.setText("www.rfinder.asalink.net/free/");
+        if (routeTextArea.getText().isEmpty()) {
+            String[] routeInfo = father.findRoute(depICAO, arrICAO);
+            try {
+                routeTextArea.setText(routeInfo[0]);
+                distanceTextField.setText(routeInfo[2]);
+                float distance = getDistance();
+                float div = (float) 3.4;
+                float priceFloat = distance / div;
+                String price = String.valueOf(priceFloat);
+                try {
+                    price = price.substring(0, price.indexOf(".") + 3);
+                } catch (IndexOutOfBoundsException e) {
+                }
+                priceTextField.setText(price);
+            } catch (ArrayIndexOutOfBoundsException e) {
+                routeTextArea.setText("www.rfinder.asalink.net/free/");
+            }
         }
+    }
+
+    private float getDistance() {
+        String distance = distanceTextField.getText();
+        distance = calc.getDecimalFromString(distance);
+        float toReturn = Float.parseFloat(distance.replaceAll(",", "."));
+        return toReturn;
+    }
+
+    private int getPrice() {
+        String price = priceTextField.getText();
+        price = calc.getDecimalFromString(price);
+        float toReturn = Float.parseFloat(price);
+        return (int)toReturn;
+    }
+
+    private String getRoute() {
+        return routeTextArea.getText();
+    }
+
+    private String getDepICAO() {
+        return depICAOTextArea.getText();
+    }
+
+    private String getArrICAO() {
+        return arrICAOTextArea.getText();
+    }
+
+    private String getFlightlevelInFeet() {
+        String flightlevel = flightlevelComboBox.getValue();
+        try {
+            flightlevel = calc.getDecimalFromString(flightlevel);
+            return flightlevel + "00";
+        } catch (NullPointerException e) {
+            return "";
+        }
+    }
+
+    private String getFlighttype() {
+        if (flighttypeComboBox.getValue().equalsIgnoreCase("Cargo")) {
+            return "C";
+        } else {
+            return "P";
+        }
+    }
+
+    private String getFlightnum() {
+        return calc.getDecimalFromString(flightnumLabel.getText());
+    }
+
+    private String getDepTime() throws NullPointerException {
+        String hour = depTimeHourTextField.getText();
+        String min = depTimeMinutesTextArea.getText();
+        String timezone = depTimeZoneComboBox.getValue();
+        if (hour.isEmpty() || min.isEmpty() || timezone.isEmpty()) {
+            throw new NullPointerException("Please fill in the Departure time properly!");
+        } else {
+            String timeString = hour + ":" + min + " " + timezone;
+            int time = 0;
+            try {
+                time = calc.getTimeFromString(timeString);
+                return timeString;
+            } catch (NumberFormatException e) {
+                return "00:00 GMT";
+            }
+        }
+    }
+
+    private Float getFlighttime() {
+        String flighttime = flighttimeTextArea.getText();
+        if (flighttime.isEmpty()) {
+            throw new NullPointerException("Please fill in a proper Flighttime using this format: HH:MM");
+        } else {
+            return calc.getFlighttimeFloat(flighttime);
+        }
+    }
+
+    private String getArrTime() {
+        try {
+            String deptime = getDepTime();
+            Float flighttime = getFlighttime();
+            return calc.getTimePlusDuration(deptime, flighttime);
+        } catch (NullPointerException e) {
+            e.printStackTrace(System.out);
+            return "00:00 GMT";
+        }
+    }
+
+    private String getDOW() {
+        String toReturn = "";
+        for (int i = 0; i < checkBoxes.length; i++) {
+            if (checkBoxes[i].isSelected()) {
+                toReturn = toReturn + String.valueOf(i+1);
+            }
+        }
+        return toReturn;
+    }
+
+    void recalcDOWBoxes(ActionEvent event) {
+        boolean allSelected = true;
+        for (CheckBox checkBox : checkBoxes) {
+            if (!checkBox.isSelected()) {
+                allSelected = false;
+            }
+        }
+        dOWAllCheckBox.setSelected(allSelected);
+    }
+
+    private String getAircraft() {
+        for (int i = 0; i < aircraftCheckBoxList.size(); i++) {
+            if (aircraftCheckBoxList.get(i).isSelected()) {
+                return String.valueOf(i + 1);
+            }
+        }
+        return "";
     }
 
 }

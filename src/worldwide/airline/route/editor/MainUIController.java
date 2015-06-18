@@ -21,7 +21,6 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
@@ -42,11 +41,11 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.ScrollBar;
 import javafx.scene.control.Slider;
+import javafx.scene.control.Tab;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -116,10 +115,10 @@ public class MainUIController implements Initializable {
     @FXML
     private Button changeLoginCredentialsButton;
 
-    AircraftTab aircraftTab;
-    ChatTab chatTab;
-    ExternalDBTab externalDBTab;
-    ProbelmaticRouteTab probelmaticRouteTab;
+    AircraftTabController aircraftTab;
+    ChatTabController chatTab;
+    ExternalDBTabController externalDBTab;
+    ProbelmaticRouteTabController probelmaticRouteTab;
     @FXML
     private ImageView aircraftImage;
     @FXML
@@ -162,7 +161,7 @@ public class MainUIController implements Initializable {
     private TableView<Schedules> routeTable;
     @FXML
     private Button routesRefreshButton;
-    private RoutesTab routesTab;
+    private RoutesTabController routesTab;
     private SQLHandler sqlHandler;
     @FXML
     private Label addFlightnumLabel;
@@ -214,13 +213,28 @@ public class MainUIController implements Initializable {
     @FXML
     private Label addScheduleMessageLabel;
 
-    AddTab addTab;
+    AddTabController addTab;
+    Tab[] databaseTabs;
+    @FXML
+    private Tab mainTAB;
+    @FXML
+    private Tab airplanesTAB;
+    @FXML
+    private Tab routesTAB;
+    @FXML
+    private Tab problematicRoutesTAB;
+    @FXML
+    private Tab chatTAB;
+    @FXML
+    private Tab externalDBTAB;
+    @FXML
+    private Tab addTAB;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         new File("/" + calc.getTempPath()).mkdirs();
         errorWindow = new ErrorMessageController(this);
-        sqlHandler = new SQLHandler();
+        sqlHandler = new SQLHandler(this);
         placeSideLabel(14, 80);
         setConnectingInfoText("");
         dbQueryTextArea.setDisable(true);
@@ -232,54 +246,63 @@ public class MainUIController implements Initializable {
         String AIRLINES = calc.getTempPath() + "/airlines.dat";
         String AIRPORTS = calc.getTempPath() + "/airports.dat";
         externalDB = new ExternalDBManager(this, ROUTES, AIRPORTS, AIRLINES);
-        aircraftTab = new AircraftTab(this, listBox, idLabel, icaoLabel, nameLabel, fullnameLabel, registrationLabel, downloadlinkLabel, imagelinkLabel,
+        aircraftTab = new AircraftTabController(this, listBox, idLabel, icaoLabel, nameLabel, fullnameLabel, registrationLabel, downloadlinkLabel, imagelinkLabel,
                 rangeLabel, weightLabel, cruiseLabel, maxpaxLabel, maxcargoLabel, minrankLabel, ranklevelLabel, aircraftImage, enabledSlider, toggleAircraftEnabledButton);
-        probelmaticRouteTab = new ProbelmaticRouteTab(problematicRouteTable, this, sqlHandler);
-        chatTab = new ChatTab(messageList, showSystemMessagsCheckBox);
-        externalDBTab = new ExternalDBTab(this, externalDB.getRoutes(), externalDB.getAirports(), externalDB.getAirlines(), externalDBRoutesTableView, externalDBAirlinesTableView, externalDBAirportsTableView);
-        routesTab = new RoutesTab(this, routeTable, sqlHandler);
-        addTab = new AddTab(this, sqlHandler, addDepICAOTextArea, addArrICAOTextArea, addAddScheduleButton, clearScheduleButton, addDOWAllCheckBox, addDOWFridayCheckBox,
+        probelmaticRouteTab = new ProbelmaticRouteTabController(problematicRouteTable, this, sqlHandler);
+        chatTab = new ChatTabController(messageList, showSystemMessagsCheckBox);
+        externalDBTab = new ExternalDBTabController(this, externalDB.getRoutes(), externalDB.getAirports(), externalDB.getAirlines(), externalDBRoutesTableView,
+                externalDBAirlinesTableView, externalDBAirportsTableView);
+        routesTab = new RoutesTabController(this, routeTable, sqlHandler);
+        addTab = new AddTabController(this, sqlHandler, addDepICAOTextArea, addArrICAOTextArea, addAddScheduleButton, clearScheduleButton, addDOWAllCheckBox, addDOWFridayCheckBox,
                 addDOWMondayCheckBox, addDOWSaturdayCheckBox, addDOWSundayCheckBox, addDOWThursdayCheckBox, addDOWTuesdayCheckBox, addDOWWednesdayCheckBox,
                 addDepTimeHourTextField, addDepTimeMinutesTextArea, addDepTimeZoneComboBox, addDistanceTextField, addFlightNumScrollBar, addFlightlevelComboBox,
                 addFlightnumLabel, addFlighttimeTextArea, addFlighttypeComboBox, addPriceTextField, addRouteTextArea, addScheduleMessageLabel, addSchedulesAirplaneVBox);
 
         allSchedulesList = new ArrayList<Schedules>();
+        databaseTabs = new Tab[]{airplanesTAB, routesTAB, problematicRoutesTAB, chatTAB, addTAB};
+        connectionChanged(false);
     }
 
     @FXML
     public void connectToDB() {
+        connectToDBButton.setText("Connecting...");
+        connectToDBButton.setDisable(true);
         setConnectingInfoText("Opening Connection... This will take a bit...");
-        try {
-            Class.forName("com.mysql.jdbc.Driver");
-            con = DriverManager.getConnection(URL, USERNAME, PASSWORD);
-            dbQueryTextArea.setDisable(false);
-            submitQueryToDBButton.setDisable(false);
-            createMissingRoutesButton.setDisable(false);
-            Platform.runLater(() -> {
-                try {
-                    sqlHandler.setConnection(con);
-                    getAircrafts();
-                    getChat();
-                    addTab.initWithData();
-                } catch (SQLException ex) {
-                    setConnectingInfoText("Error!");
-                    ex.printStackTrace(System.err);
-                }
-            });
-            setConnectingInfoText("Connected");
-            connectToDBButton.setText("Disconnect");
-            loginStatusLabel.setText("Connected as " + USERNAME);
-            connectToDBButton.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent e) {
-                    disconnectFromDB();
-                }
-            });
+            try {
+                Class.forName("com.mysql.jdbc.Driver");
+                con = DriverManager.getConnection(URL, USERNAME, PASSWORD);
+                Platform.runLater(() -> {
+                    try {
+                        //internal changes
+                        sqlHandler.setConnection(con);
+                        getAircrafts();
+                        getChat();
+                        addTab.initWithData();
+                        //ui changes
+                        connectionChanged(sqlHandler.connectionAvail());
+                        loginStatusLabel.setText("Connected as " + USERNAME);
+                        setConnectingInfoText("Connected");
+                        dbQueryTextArea.setDisable(false);
+                        submitQueryToDBButton.setDisable(false);
+                        createMissingRoutesButton.setDisable(false);
+                    } catch (SQLException ex) {
+                        setConnectingInfoText("Error!");
+                        ex.printStackTrace(System.err);
+                    }
+                });
+                connectToDBButton.setText("Disconnect");
+                connectToDBButton.setDisable(false);
+                connectToDBButton.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent e) {
+                        disconnectFromDB();
+                    }
+                });
 
-        } catch (SQLException | ClassNotFoundException ex) {
-            setConnectingInfoText("Error!");
-            ex.printStackTrace(System.err);
-        }
+            } catch (SQLException | ClassNotFoundException ex) {
+                setConnectingInfoText("Error!");
+                ex.printStackTrace(System.err);
+            }
     }
 
     public void setConnectingInfoText(String text) {
@@ -599,6 +622,7 @@ public class MainUIController implements Initializable {
                     connectToDB();
                 }
             });
+            connectionChanged(sqlHandler.connectionAvail());
         } catch (SQLException | NullPointerException ex) {
 
         }
@@ -657,11 +681,7 @@ public class MainUIController implements Initializable {
     }
 
     void submitQuery(String sql) {
-        try {
-            sqlHandler.submitQuery(sql);
-        } catch (SQLException ex) {
-            ex.printStackTrace(System.err);
-        }
+        sqlHandler.executeUpdate(sql);
     }
 
     @FXML
@@ -748,7 +768,9 @@ public class MainUIController implements Initializable {
 
     @FXML
     private void addSchedule(ActionEvent event) {
-        Schedules newSchedule = addTab.addSchedule(event);
+        if(addTab.addSchedule(event)){
+            getRoutesFromDataBase();
+        }
     }
 
     @FXML
@@ -781,6 +803,17 @@ public class MainUIController implements Initializable {
     @FXML
     private void addICAOEntered(Event event) {
         addTab.iCAOEntered(event);
+    }
+
+    @FXML
+    private void addRecalcDOWBoxes(ActionEvent event) {
+        addTab.recalcDOWBoxes(event);
+    }
+
+    void connectionChanged(boolean connectionAvail) {
+        for (int i = 0; i < databaseTabs.length; i++) {
+            databaseTabs[i].setDisable(!connectionAvail);
+        }
     }
 
 }

@@ -23,7 +23,7 @@ import javafx.util.StringConverter;
  */
 public class calc {
 
-    public static int StringToInt(String toConvert) {
+    static int StringToInt(String toConvert) {
         int toReturn = 0;
         toConvert = toConvert.trim();
         try {
@@ -161,8 +161,13 @@ public class calc {
         String startingTimeZone = getTimeZoneFromString(startingTime);
         String endingTimeZone = getTimeZoneFromString(endingTime);
         if (startingTimeZone.equalsIgnoreCase(endingTimeZone)) {
-            int startingTimeInt = getTimeFromString(startingTime);
-            int endingTimeInt = getTimeFromString(endingTime);
+            int startingTimeInt = 0;
+            int endingTimeInt = 0;
+            try {
+                startingTimeInt = getTimeFromString(startingTime);
+                endingTimeInt = getTimeFromString(endingTime);
+            } catch (NumberFormatException e) {
+            }
             int duration = endingTimeInt - startingTimeInt;
             return getStringFromTime(duration);
         } else {
@@ -171,7 +176,11 @@ public class calc {
     }
 
     static String getTimePlusDuration(String startingTime, Float duration) {
-        int starting = getTimeFromString(startingTime);
+        int starting = 0;
+        try {
+            starting = getTimeFromString(startingTime);
+        } catch (NumberFormatException e) {
+        }
         String timeZone = getTimeZoneFromString(startingTime);
         int durationInt = getTimeIntFromFloat(duration);
         int endTime = (int) (starting + durationInt);
@@ -179,20 +188,28 @@ public class calc {
     }
 
     static String getTimeMinusDuration(String endingTime, Float duration) {
-        int ending = getTimeFromString(endingTime);
+        int ending = 0;
+        try {
+            ending = getTimeFromString(endingTime);
+        } catch (NumberFormatException e) {
+        }
         String endingtimeZone = getTimeZoneFromString(endingTime);
         int durationInt = getTimeIntFromFloat(duration);
         int startTime = (int) (ending - durationInt);
         return getStringFromTime(startTime, endingtimeZone);
     }
 
-    static int getTimeFromString(String toConvert) {
-        String hourString = toConvert.substring(0, toConvert.indexOf(":"));
-        toConvert = toConvert.substring(toConvert.indexOf(":") + 1);
-        String minuteString = toConvert.substring(0, 2);
-        int hour = Integer.parseInt(hourString);
-        int minute = Integer.parseInt(minuteString);
-        return (hour * 60) + minute;
+    static int getTimeFromString(String toConvert) throws NumberFormatException {
+        try {
+            String hourString = toConvert.substring(0, toConvert.indexOf(":"));
+            toConvert = toConvert.substring(toConvert.indexOf(":") + 1);
+            String minuteString = toConvert.substring(0, 2);
+            int hour = Integer.parseInt(hourString);
+            int minute = Integer.parseInt(minuteString);
+            return (hour * 60) + minute;
+        } catch (NumberFormatException e) {
+            throw new NumberFormatException("Couldn't parse " + toConvert + " as a Time!");
+        }
     }
 
     static String getTimeZoneFromString(String timeWithTimeZone) {
@@ -242,5 +259,24 @@ public class calc {
             }
         }
         return toReturn;
+    }
+
+    static String getDecimalFromString(String input) {
+        return input.replaceAll("[^\\d.,]", "");
+    }
+
+    static Float getFlighttimeFloat(String flighttime) throws NumberFormatException {
+        try {
+            String[] flighttimeArray = flighttime.split(":");
+            String hour = flighttimeArray[0];
+            String min = flighttimeArray[1];
+            Float toReturn = Float.parseFloat(hour);
+            Float decimal = Float.parseFloat(min)/100;
+            toReturn = toReturn + decimal;
+            return toReturn;
+        } catch (IndexOutOfBoundsException e) {
+            throw new NumberFormatException(flighttime + " is not a valid Flighttime");
+        }
+
     }
 }
