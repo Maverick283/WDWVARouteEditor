@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -42,6 +43,7 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.ScrollBar;
 import javafx.scene.control.Slider;
 import javafx.scene.control.Tab;
+import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
@@ -56,6 +58,7 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import sql.Acarschat;
 import sql.Aircraft;
+import sql.Pilots;
 import sql.Schedules;
 
 /**
@@ -229,6 +232,12 @@ public class MainUIController implements Initializable {
     private Tab externalDBTAB;
     @FXML
     private Tab addTAB;
+    @FXML
+    private Tab pilotsTAB;
+    private PilotsTabController pilotsTab;
+    @FXML
+    private TableView<Pilots> pilotsTable;
+    private ArrayList<Pilots> pilotsList;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -248,6 +257,7 @@ public class MainUIController implements Initializable {
         externalDB = new ExternalDBManager(this, ROUTES, AIRPORTS, AIRLINES);
         aircraftTab = new AircraftTabController(this, listBox, idLabel, icaoLabel, nameLabel, fullnameLabel, registrationLabel, downloadlinkLabel, imagelinkLabel,
                 rangeLabel, weightLabel, cruiseLabel, maxpaxLabel, maxcargoLabel, minrankLabel, ranklevelLabel, aircraftImage, enabledSlider, toggleAircraftEnabledButton);
+        pilotsTab = new PilotsTabController(this, pilotsTable, sqlHandler);
         probelmaticRouteTab = new ProbelmaticRouteTabController(problematicRouteTable, this, sqlHandler);
         chatTab = new ChatTabController(messageList, showSystemMessagsCheckBox);
         externalDBTab = new ExternalDBTabController(this, externalDB.getRoutes(), externalDB.getAirports(), externalDB.getAirlines(), externalDBRoutesTableView,
@@ -259,7 +269,7 @@ public class MainUIController implements Initializable {
                 addFlightnumLabel, addFlighttimeTextArea, addFlighttypeComboBox, addPriceTextField, addRouteTextArea, addScheduleMessageLabel, addSchedulesAirplaneVBox);
 
         allSchedulesList = new ArrayList<Schedules>();
-        databaseTabs = new Tab[]{airplanesTAB, routesTAB, problematicRoutesTAB, chatTAB, addTAB};
+        databaseTabs = new Tab[]{airplanesTAB, routesTAB, pilotsTAB, problematicRoutesTAB, chatTAB, addTAB};
         connectionChanged(false);
     }
 
@@ -268,41 +278,42 @@ public class MainUIController implements Initializable {
         connectToDBButton.setText("Connecting...");
         connectToDBButton.setDisable(true);
         setConnectingInfoText("Opening Connection... This will take a bit...");
-            try {
-                Class.forName("com.mysql.jdbc.Driver");
-                con = DriverManager.getConnection(URL, USERNAME, PASSWORD);
-                Platform.runLater(() -> {
-                    try {
-                        //internal changes
-                        sqlHandler.setConnection(con);
-                        getAircrafts();
-                        getChat();
-                        addTab.initWithData();
-                        //ui changes
-                        connectionChanged(sqlHandler.connectionAvail());
-                        loginStatusLabel.setText("Connected as " + USERNAME);
-                        setConnectingInfoText("Connected");
-                        dbQueryTextArea.setDisable(false);
-                        submitQueryToDBButton.setDisable(false);
-                        createMissingRoutesButton.setDisable(false);
-                    } catch (SQLException ex) {
-                        setConnectingInfoText("Error!");
-                        ex.printStackTrace(System.err);
-                    }
-                });
-                connectToDBButton.setText("Disconnect");
-                connectToDBButton.setDisable(false);
-                connectToDBButton.setOnAction(new EventHandler<ActionEvent>() {
-                    @Override
-                    public void handle(ActionEvent e) {
-                        disconnectFromDB();
-                    }
-                });
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+            con = DriverManager.getConnection(URL, USERNAME, PASSWORD);
+            Platform.runLater(() -> {
+                try {
+                    //internal changes
+                    sqlHandler.setConnection(con);
+                    getAircrafts();
+                    getChat();
+                    getPilotsFromDataBase();
+                    addTab.initWithData();
+                    //ui changes
+                    connectionChanged(sqlHandler.connectionAvail());
+                    loginStatusLabel.setText("Connected as " + USERNAME);
+                    setConnectingInfoText("Connected");
+                    dbQueryTextArea.setDisable(false);
+                    submitQueryToDBButton.setDisable(false);
+                    createMissingRoutesButton.setDisable(false);
+                } catch (SQLException ex) {
+                    setConnectingInfoText("Error!");
+                    ex.printStackTrace(System.err);
+                }
+            });
+            connectToDBButton.setText("Disconnect");
+            connectToDBButton.setDisable(false);
+            connectToDBButton.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent e) {
+                    disconnectFromDB();
+                }
+            });
 
-            } catch (SQLException | ClassNotFoundException ex) {
-                setConnectingInfoText("Error!");
-                ex.printStackTrace(System.err);
-            }
+        } catch (SQLException | ClassNotFoundException ex) {
+            setConnectingInfoText("Error!");
+            ex.printStackTrace(System.err);
+        }
     }
 
     public void setConnectingInfoText(String text) {
@@ -768,7 +779,7 @@ public class MainUIController implements Initializable {
 
     @FXML
     private void addSchedule(ActionEvent event) {
-        if(addTab.addSchedule(event)){
+        if (addTab.addSchedule(event)) {
             getRoutesFromDataBase();
         }
     }
@@ -814,6 +825,69 @@ public class MainUIController implements Initializable {
         for (int i = 0; i < databaseTabs.length; i++) {
             databaseTabs[i].setDisable(!connectionAvail);
         }
+    }
+
+    int getAircraftIDByRegistration(String registration) {
+        for (int i = 0; i < aircraftList.size(); i++) {
+            if (registration.equalsIgnoreCase(aircraftList.get(i).getRegistration())) {
+                return i + 1;
+            }
+        }
+        return 0;
+    }
+
+    public void getPilotsFromDataBase() throws SQLException {
+
+        String sql = "SELECT * FROM pilots";
+        ResultSet rs = sqlHandler.getResult(sql);
+
+        //STEP 5: Extract data from result set
+        pilotsList = new ArrayList();
+        while (rs.next()) {
+            int pilotid = rs.getInt("pilotid");
+            String firstname = rs.getString("firstname");
+            String lastname = rs.getString("lastname");
+            String email = rs.getString("email");
+            String location = rs.getString("location");
+            String hub = rs.getString("hub");
+            String password = rs.getString("password");
+            String salt = rs.getString("salt");
+            String bgimage = rs.getString("bgimage");
+            Date lastlogin;
+            try {
+                lastlogin = rs.getDate("lastlogin");
+            } catch (SQLException e) {
+                lastlogin = new Date(0);
+            }
+            int totalflights = rs.getInt("totalflights");
+            float totalhours = rs.getFloat("totalhours");
+            float totalpay = rs.getFloat("totalpay");
+            float transferhours = rs.getFloat("transferhours");
+            int rankid = rs.getInt("rankid");
+            String rank = rs.getString("rank");
+            int ranklevel = rs.getInt("ranklevel");
+            short confirmed = rs.getShort("confirmed");
+            short retired = rs.getShort("retired");
+            Date joindate;
+            try {
+                joindate = rs.getDate("joindate");
+            } catch (SQLException e) {
+                joindate = new Date(0);
+            }
+            Date lastpirep;
+            try {
+                lastpirep = rs.getDate("lastpirep");
+            } catch (SQLException e) {
+                lastpirep = new Date(0);
+            }
+            Date lastclient = sqlHandler.getLastClientLoginByPilotID(pilotid);            
+            int vatsimid = sqlHandler.getVatsimIDByPilotID(pilotid);
+
+            Pilots pilot = new Pilots(pilotid, firstname, lastname, email, location, hub, password, salt, bgimage, lastlogin, totalflights, totalhours, totalpay, transferhours, rankid, rank, ranklevel, confirmed, retired, joindate, lastpirep, lastclient, vatsimid);
+            pilotsList.add(pilot);
+
+        }
+        pilotsTab.createList(pilotsList);
     }
 
 }

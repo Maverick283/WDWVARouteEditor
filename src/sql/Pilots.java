@@ -139,6 +139,9 @@ public class Pilots implements Serializable {
     private Airlines code;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "pilotid")
     private Collection<Groupmembers> groupmembersCollection;
+    
+    private Date lastclient;
+    private int vatsimid;
 
     public Pilots() {
     }
@@ -169,6 +172,32 @@ public class Pilots implements Serializable {
         this.retired = retired;
         this.joindate = joindate;
         this.lastpirep = lastpirep;
+    }
+
+    public Pilots(Integer pilotid, String firstname, String lastname, String email, String location, String hub, String password, String salt, String bgimage, Date lastlogin, int totalflights, float totalhours, float totalpay, float transferhours, int rankid, String rank, int ranklevel, short confirmed, short retired, Date joindate, Date lastpirep, Date lastclient, int vatsimid) {
+        this.pilotid = pilotid;
+        this.firstname = firstname;
+        this.lastname = lastname;
+        this.email = email;
+        this.location = location;
+        this.hub = hub;
+        this.password = password;
+        this.salt = salt;
+        this.bgimage = bgimage;
+        this.lastlogin = lastlogin;
+        this.totalflights = totalflights;
+        this.totalhours = totalhours;
+        this.totalpay = totalpay;
+        this.transferhours = transferhours;
+        this.rankid = rankid;
+        this.rank = rank;
+        this.ranklevel = ranklevel;
+        this.confirmed = confirmed;
+        this.retired = retired;
+        this.joindate = joindate;
+        this.lastpirep = lastpirep;
+        this.lastclient = lastclient;
+        this.vatsimid = vatsimid;
     }
 
     public Integer getPilotid() {
@@ -346,6 +375,16 @@ public class Pilots implements Serializable {
     public void setLastip(String lastip) {
         this.lastip = lastip;
     }
+    
+    public Date getLastclient(){
+        return lastclient;
+    }
+    
+    public int getVatsimid(){
+        return vatsimid;
+    }
+    
+    
 
     @XmlTransient
     public Collection<Fieldvalues> getFieldvaluesCollection() {

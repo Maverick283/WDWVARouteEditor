@@ -7,6 +7,7 @@ package worldwide.airline.route.editor;
 
 import com.mysql.jdbc.exceptions.MySQLNonTransientConnectionException;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -154,6 +155,46 @@ public class SQLHandler {
             return executeQuery("select * from loa WHERE id = 1;", false);
         } catch (NullPointerException e) {
             return false;
+        }
+    }
+
+    void changePilotFirstName(int editedID, String newFirstName) {
+        System.out.println("Unsupported Method: changePilotFirstName at worldwide.airline.route.editor.SQLHandler"); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    void changePilotLastName(int editedID, String newLastName) {
+        System.out.println("Unsupported Method: changePilotLastName at worldwide.airline.route.editor.SQLHandler"); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    void changePilotEmail(int editedID, String newEmail) {
+        System.out.println("Unsupported Method: changePilotEmail at worldwide.airline.route.editor.SQLHandler"); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    void changePilotHub(int editedID, String newHub) {
+        System.out.println("Unsupported Method: changePilotHub at worldwide.airline.route.editor.SQLHandler"); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    Date getLastClientLoginByPilotID(int pilotid) {
+        String column = "logintime";
+        String sql = "SELECT " + column + " FROM sessions WHERE pilotid = " + pilotid + " ORDER BY logintime DESC LIMIT 1;";
+        try {
+            ResultSet rs = getResult(sql);
+            rs.next();
+            return rs.getDate(column);
+        } catch (SQLException | NullPointerException ex) {
+            return new Date(0);
+        }
+    }
+
+    int getVatsimIDByPilotID(int pilotid) {
+        String column = "value";
+        String table = "fieldvalues";
+        try {
+            ResultSet rs = getResult("select " + column + " from " + table + " WHERE pilotid = " + pilotid + ";");
+            rs.next();
+            return rs.getInt(column);
+        } catch (SQLException | NullPointerException ex) {
+            return 0;
         }
     }
 }

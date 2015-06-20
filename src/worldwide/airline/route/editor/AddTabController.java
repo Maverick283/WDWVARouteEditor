@@ -143,9 +143,9 @@ public class AddTabController {
         aircraftCheckBoxList = new ArrayList<>();
         for (Aircraft aircraft : aircrafts) {
             HBox aircraftBox = new HBox();
-            CheckBox checkBox = new CheckBox(aircraft.getFullname());
+            CheckBox checkBox = new CheckBox(aircraft.getRegistration());
             aircraftCheckBoxList.add(checkBox);
-            Label registration = new Label(aircraft.getRegistration());
+            Label registration = new Label(aircraft.getFullname());
             aircraftBox.getChildren().addAll(checkBox, registration);
             aircraftBox.setSpacing(14);
             schedulesAirplaneVBox.getChildren().add(aircraftBox);
@@ -206,35 +206,44 @@ public class AddTabController {
          12 = price
          13 = flighttype
          */
-        fi[0] = getFlightnum();
-        fi[1] = getDepICAO();
-        fi[2] = getArrICAO();
-        fi[3] = getRoute();
-        fi[4] = "NA"; //No route details!
-        fi[5] = getAircraft();
-        fi[6] = getFlightlevelInFeet();
-        fi[7] = String.valueOf(getDistance());
-        fi[8] = getDepTime();
-        fi[9] = getArrTime();
-        fi[10] = String.valueOf(getFlighttime());
-        fi[11] = getDOW();
-        fi[12] = String.valueOf(getPrice());
-        fi[13] = getFlighttype();
-        boolean allDataAvail = true;
-        for (int i = 0; i < fi.length; i++) {
-            if (fi[i].isEmpty()) {
-                allDataAvail = false;
+        ArrayList aircraftsTicked = getAllAircraftsTicked();
+        int amountOfAIrcraftsTicked = aircraftsTicked.size();
+        int counter = 0;
+        boolean allFlightsEntered = true;
+        String errorMessageCollection = "";
+        while (counter < amountOfAIrcraftsTicked) {
+            fi[0] = getFlightnum();
+            fi[1] = getDepICAO();
+            fi[2] = getArrICAO();
+            fi[3] = getRoute();
+            fi[4] = "NA"; //No route details!
+            fi[5] = getAircraft();
+            fi[6] = getFlightlevelInFeet();
+            fi[7] = String.valueOf(getDistance());
+            fi[8] = getDepTime();
+            fi[9] = getArrTime();
+            fi[10] = String.valueOf(getFlighttime());
+            fi[11] = getDOW();
+            fi[12] = String.valueOf(getPrice());
+            fi[13] = getFlighttype();
+            boolean allDataAvail = true;
+            for (int i = 0; i < fi.length; i++) {
+                if (fi[i].isEmpty()) {
+                    allDataAvail = false;
+                }
             }
-        }
 
-        if (allDataAvail) {
-            sqlHandler.executeQuery("INSERT INTO wdwvacom_wdw.schedules (code, flightnum, depicao, arricao, route, route_details, aircraft, flightlevel, distance, deptime, arrtime, flighttime, daysofweek, price, flighttype, timesflown, notes, enabled, bidid) \n"
-                    + "	VALUES ('WDW', '" + fi[0] + "', '" + fi[1] + "', '" + fi[2] + "', '" + fi[3] + "', '" + fi[4] + "', '" + fi[5] + "', '" + fi[6] + "', " + fi[7] + ", '" + fi[8] + "', '" + fi[9] + "', " + fi[10] + ", '" + fi[11] + "', " + fi[12] + ", '" + fi[13] + "', DEFAULT, '', DEFAULT, DEFAULT);");
-            return true;
-        } else {
-            System.out.println("Please enter all data!");
-            return false;
+            if (allDataAvail) {
+                sqlHandler.executeQuery("INSERT INTO wdwvacom_wdw.schedules (code, flightnum, depicao, arricao, route, route_details, aircraft, flightlevel, distance, deptime, arrtime, flighttime, daysofweek, price, flighttype, timesflown, notes, enabled, bidid) \n"
+                        + "	VALUES ('WDW', '" + fi[0] + "', '" + fi[1] + "', '" + fi[2] + "', '" + fi[3] + "', '" + fi[4] + "', '" + fi[5] + "', '" + fi[6] + "', " + fi[7] + ", '" + fi[8] + "', '" + fi[9] + "', " + fi[10] + ", '" + fi[11] + "', " + fi[12] + ", '" + fi[13] + "', DEFAULT, '', DEFAULT, DEFAULT);");
+            } else {
+                System.out.println("Please enter all data!");
+                return false;
+            }
+            counter++;
+            untickFirstSelectedAircraft();
         }
+        return true;
     }
 
     void clearSchedule(ActionEvent event) {
@@ -291,7 +300,7 @@ public class AddTabController {
         String price = priceTextField.getText();
         price = calc.getDecimalFromString(price);
         float toReturn = Float.parseFloat(price);
-        return (int)toReturn;
+        return (int) toReturn;
     }
 
     private String getRoute() {
@@ -370,7 +379,7 @@ public class AddTabController {
         String toReturn = "";
         for (int i = 0; i < checkBoxes.length; i++) {
             if (checkBoxes[i].isSelected()) {
-                toReturn = toReturn + String.valueOf(i+1);
+                toReturn = toReturn + String.valueOf(i + 1);
             }
         }
         return toReturn;
@@ -389,10 +398,34 @@ public class AddTabController {
     private String getAircraft() {
         for (int i = 0; i < aircraftCheckBoxList.size(); i++) {
             if (aircraftCheckBoxList.get(i).isSelected()) {
-                return String.valueOf(i + 1);
+                return String.valueOf(getAircraftIDByRegistration(aircraftCheckBoxList.get(i).getText()));
             }
         }
         return "";
+    }
+
+    private ArrayList getAllAircraftsTicked() {
+        ArrayList<String> toReturn = new ArrayList<>();
+        for (CheckBox aircraftCheckBoxList1 : aircraftCheckBoxList) {
+            if (aircraftCheckBoxList1.isSelected()) {
+                toReturn.add(aircraftCheckBoxList1.getText());
+            }
+        }
+        return toReturn;
+    }
+
+    private int getAircraftIDByRegistration(String registration) {
+        return father.getAircraftIDByRegistration(registration);
+    }
+
+    private void untickFirstSelectedAircraft() {
+        for (int i = 0; i < aircraftCheckBoxList.size(); i++) {
+            if (aircraftCheckBoxList.get(i).isSelected()) {
+                aircraftCheckBoxList.get(i).setSelected(false);
+                i = aircraftCheckBoxList.size();
+                flightnumberUp(new ActionEvent());
+            }
+        }
     }
 
 }
