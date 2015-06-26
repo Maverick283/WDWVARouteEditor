@@ -427,7 +427,121 @@
                                   </Tab>
                                   <Tab text="Aircraft">
                                     <content>
-                                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                             <children>
+                                                <GridPane layoutX="14.0" layoutY="31.0" prefHeight="404.0" prefWidth="317.0">
+                                                  <columnConstraints>
+                                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="134.0" minWidth="10.0" prefWidth="122.0" />
+                                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="217.0" minWidth="10.0" prefWidth="195.0" />
+                                                  </columnConstraints>
+                                                  <rowConstraints>
+                                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                  </rowConstraints>
+                                                   <children>
+                                                      <Label text="Aircraft ICAO Code:" />
+                                                      <Label text="Airraft Name / Type:" GridPane.rowIndex="1" />
+                                                      <Label text="Full Name:" GridPane.rowIndex="2" />
+                                                      <Label text="Registration:" GridPane.rowIndex="3" />
+                                                      <Label text="Max Pax:" GridPane.rowIndex="4" />
+                                                      <Label text="Max Cargo:" GridPane.rowIndex="5" />
+                                                      <Label text="Download Link:" GridPane.rowIndex="6" />
+                                                      <Label text="Image Link:" GridPane.rowIndex="7" />
+                                                      <Label text="Range:" GridPane.rowIndex="8" />
+                                                      <Label text="Weight:" GridPane.rowIndex="9" />
+                                                      <Label text="Cruise:" GridPane.rowIndex="10" />
+                                                      <Label text="Minimum req. Rank:" GridPane.rowIndex="11" />
+                                                      <Label text="Enabled:" GridPane.rowIndex="12" />
+                                                      <TextField fx:id="addAircraftICAO" promptText="eg. A319" GridPane.columnIndex="1" />
+                                                      <TextField fx:id="addAircraftType" promptText="eg. A319-100" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                                      <TextField fx:id="addAircraftName" promptText="eg. Airbus A319-100" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                                      <TextField fx:id="addAircraftRegistration" promptText="eg- G-WIDE" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                                                      <TextField fx:id="addAircraftMAXPax" promptText="eg. 142" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                                                      <HBox alignment="CENTER_LEFT" spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                                                         <children>
+                                                            <TextField fx:id="addAircraftMaxCargo" prefWidth="170.0" promptText="eg. 41391" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                                                            <Label text="lbs" />
+                                                         </children>
+                                                      </HBox>
+                                                      <TextField fx:id="addAircraftDownloadLink" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                                                      <TextField fx:id="addAircraftImageLink" onAction="#addAircraftImageLinkEntered" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+                                                      <HBox alignment="CENTER_LEFT" spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="8">
+                                                         <children>
+                                                            <TextField fx:id="addAircraftRange" prefWidth="170.0" promptText="eg. 3800" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+                                                            <Label text="nm" />
+                                                         </children>
+                                                      </HBox>
+                                                      <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="9">
+                                                         <children>
+                                                            <TextField fx:id="addAircraftWeight" prefWidth="170.0" promptText="eg. 87930" />
+                                                            <Label text="lbs" />
+                                                         </children>
+                                                      </HBox>
+                                                      <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="10">
+                                                         <children>
+                                                            <TextField fx:id="addAircraftCruise" prefWidth="170.0" promptText="eg. 486" />
+                                                            <Label text="kts" />
+                                                         </children>
+                                                      </HBox>
+                                                      <ComboBox fx:id="addAircraftMinRank" prefWidth="195.0" GridPane.columnIndex="1" GridPane.rowIndex="11" />
+                                                      <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="12">
+                                                         <children>
+                                                            <Label text="Yes" />
+                                                            <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="14.0" prefWidth="30.0">
+                                                               <children>
+                                                                  <Slider fx:id="addAircraftEnabledSlider" blockIncrement="1.0" layoutX="3.0" layoutY="1.0" max="1.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="14.0" prefWidth="30.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                                                  <Button fx:id="addAircraftEnabledButton" layoutX="38.0" layoutY="1.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#addAircraftEnableToggled" prefHeight="14.0" prefWidth="30.0" text="Button" textFill="TRANSPARENT" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                                               </children>
+                                                            </AnchorPane>
+                                                            <Label text="No" />
+                                                         </children>
+                                                      </HBox>
+                                                   </children>
+                                                </GridPane>
+                                                <ImageView fx:id="addAircraftImageView" fitHeight="100.0" fitWidth="150.0" layoutX="400.0" layoutY="14.0" pickOnBounds="true" preserveRatio="true" />
+                                                <ScrollPane hbarPolicy="NEVER" layoutX="400.0" layoutY="164.0" prefHeight="320.0" prefWidth="590.0" AnchorPane.bottomAnchor="40.0" AnchorPane.rightAnchor="10.0">
+                                                   <content>
+                                                      <VBox fx:id="addAircraftRoutesVBox" prefHeight="340.0" prefWidth="576.0" />
+                                                   </content>
+                                                </ScrollPane>
+                                                <VBox layoutX="656.0" layoutY="14.0" prefHeight="100.0" prefWidth="300.0" AnchorPane.rightAnchor="12.0" AnchorPane.topAnchor="14.0">
+                                                   <children>
+                                                      <HBox alignment="CENTER_LEFT" prefHeight="20.0" prefWidth="332.0" spacing="5.0">
+                                                         <children>
+                                                            <CheckBox fx:id="addAircraftFilterCoutesCheckBox" mnemonicParsing="false" onAction="#onlyShowRoutesContainingOnAction" text="Only show routes containing" />
+                                                            <TextField fx:id="addAircraftRoutesFilterICAOTextField" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" onAction="#onlyShowRoutesICAOOnAction" prefHeight="20.0" prefWidth="51.0" promptText="ICAO">
+                                                               <font>
+                                                                  <Font size="11.0" />
+                                                               </font>
+                                                            </TextField>
+                                                         </children>
+                                                      </HBox>
+                                                   </children>
+                                                </VBox>
+                                                <HBox alignment="CENTER_RIGHT" layoutX="779.0" layoutY="435.0" prefHeight="25.0" prefWidth="974.0" spacing="5.0" AnchorPane.bottomAnchor="5.0" AnchorPane.rightAnchor="10.0">
+                                                   <children>
+                                                      <Label fx:id="addAircraftMessageLabel" />
+                                                      <Button fx:id="addAircraftAddPlusRoute" mnemonicParsing="false" onAction="#addAircraftAndRoutePressed" text="Add Aircraft &amp; Routes" />
+                                                      <Button fx:id="addAircraftAircraftONLY" mnemonicParsing="false" onAction="#addAircraftAircraftONLYPressed" text="Add Aircraft ONLY" />
+                                                      <Button fx:id="addAircraftClear" mnemonicParsing="false" onAction="#addAircraftClearPressed" text="Clear" />
+                                                   </children>
+                                                </HBox>
+                                                <Button layoutX="591.0" layoutY="76.0" mnemonicParsing="false" onAction="#suggestRoutesForAircraft" text="Get Routes" AnchorPane.rightAnchor="334.0" AnchorPane.topAnchor="76.0" />
+                                                <Label layoutX="420.0" layoutY="106.0" prefWidth="150.0" text="Route:" AnchorPane.leftAnchor="430.0" AnchorPane.topAnchor="126.0" />
+                                                <Label layoutX="577.0" layoutY="106.0" text="Occurences:" AnchorPane.leftAnchor="577.0" AnchorPane.topAnchor="126.0" />
+                                                <CheckBox fx:id="addAircraftCheckAll" layoutX="400.0" layoutY="106.0" mnemonicParsing="false" onAction="#addAircraftCheckAllRoutes" AnchorPane.leftAnchor="405.0" AnchorPane.topAnchor="126.0" />
+                                             </children></AnchorPane>
                                     </content>
                                   </Tab>
                                     <Tab text="News">

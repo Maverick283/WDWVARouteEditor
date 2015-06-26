@@ -197,4 +197,28 @@ public class SQLHandler {
             return 0;
         }
     }
+
+    Integer getIDOfScheduleByFlightnum(String flightnum) {
+        String column = "id";
+        String table = "schedules";
+        try {
+            ResultSet rs = getResult("select " + column + " from " + table + " WHERE flightnum = " + flightnum + ";");
+            rs.next();
+            return rs.getInt(column);
+        } catch (SQLException | NullPointerException ex) {
+            return 0;
+        }
+    }
+
+    Integer getIDOfAircraftByRegistration(String registration) {
+        String column = "id";
+        String table = "aircraft";
+        try {
+            ResultSet rs = getResult("select " + column + " from " + table + " WHERE registration = '" + registration + "';");
+            rs.next();
+            return rs.getInt(column);
+        } catch (SQLException | NullPointerException ex) {
+            return 0;
+        }
+    }
 }

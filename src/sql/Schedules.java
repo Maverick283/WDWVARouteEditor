@@ -146,6 +146,28 @@ public class Schedules implements Serializable {
         this.bidid = bidid;
     }
 
+    public Schedules(Integer id, String flightnum, String depicao, String arricao, String route, String routeDetails, String aircraft, String flightlevel, float distance, String deptime, String arrtime, float flighttime, String daysofweek, float price, String flighttype, String notes) {
+        this.id = id;
+        this.flightnum = flightnum;
+        this.depicao = depicao;
+        this.arricao = arricao;
+        this.route = route;
+        this.routeDetails = routeDetails;
+        this.aircraft = aircraft;
+        this.flightlevel = flightlevel;
+        this.distance = distance;
+        this.deptime = deptime.trim().replaceAll("\\d([A-Z])", "$0 $1");
+        this.arrtime = arrtime.trim().replaceAll("\\d([A-Z])", "$0 $1");
+        this.flighttime = flighttime;
+        this.daysofweek = daysofweek;
+        this.price = price;
+        this.flighttype = flighttype;
+        this.timesflown = 0;
+        this.notes = notes;
+        this.enabled = 1;
+        this.bidid = 0;
+    }
+
     public Integer getId() {
         return id;
     }

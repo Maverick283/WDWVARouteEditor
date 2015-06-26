@@ -139,6 +139,30 @@ public class Aircraft implements Serializable {
          }*/
     }
 
+    public Aircraft(String icao, String name, String fullname, String registration, String downloadlink, String imagelink, String range, String weight, String cruise, float maxpax, float maxcargo, int minrank, short enabled) {
+        this.icao = icao;
+        this.name = name;
+        this.fullname = fullname;
+        this.registration = registration;
+        this.downloadlink = downloadlink;
+        this.imagelink = imagelink;
+        this.range = range;
+        this.weight = weight;
+        this.cruise = cruise;
+        this.maxpax = maxpax;
+        this.maxcargo = maxcargo;
+        this.minrank = minrank;
+        this.enabled = enabled;
+        /*  creates a new picture for each aircraft... This as it is now takes a lot of time...
+         try{
+            
+         this.thumbnail = new Image(imagelink);
+         }
+         catch(Exception e){
+         e.printStackTrace(System.err);
+         }*/
+    }
+
     public Integer getId() {
         return id;
     }

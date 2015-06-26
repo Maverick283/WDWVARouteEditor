@@ -238,6 +238,52 @@ public class MainUIController implements Initializable {
     @FXML
     private TableView<Pilots> pilotsTable;
     private ArrayList<Pilots> pilotsList;
+    @FXML
+    private TextField addAircraftICAO;
+    @FXML
+    private TextField addAircraftType;
+    @FXML
+    private TextField addAircraftName;
+    @FXML
+    private TextField addAircraftRegistration;
+    @FXML
+    private TextField addAircraftMAXPax;
+    @FXML
+    private TextField addAircraftMaxCargo;
+    @FXML
+    private TextField addAircraftDownloadLink;
+    @FXML
+    private TextField addAircraftImageLink;
+    @FXML
+    private TextField addAircraftRange;
+    @FXML
+    private TextField addAircraftWeight;
+    @FXML
+    private TextField addAircraftCruise;
+    @FXML
+    private ComboBox<String> addAircraftMinRank;
+    @FXML
+    private Slider addAircraftEnabledSlider;
+    @FXML
+    private Button addAircraftEnabledButton;
+    @FXML
+    private ImageView addAircraftImageView;
+    @FXML
+    private VBox addAircraftRoutesVBox;
+    @FXML
+    private CheckBox addAircraftFilterCoutesCheckBox;
+    @FXML
+    private TextField addAircraftRoutesFilterICAOTextField;
+    @FXML
+    private Button addAircraftAddPlusRoute;
+    @FXML
+    private Button addAircraftAircraftONLY;
+    @FXML
+    private Button addAircraftClear;
+    @FXML
+    private Label addAircraftMessageLabel;
+    @FXML
+    private CheckBox addAircraftCheckAll;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -266,7 +312,11 @@ public class MainUIController implements Initializable {
         addTab = new AddTabController(this, sqlHandler, addDepICAOTextArea, addArrICAOTextArea, addAddScheduleButton, clearScheduleButton, addDOWAllCheckBox, addDOWFridayCheckBox,
                 addDOWMondayCheckBox, addDOWSaturdayCheckBox, addDOWSundayCheckBox, addDOWThursdayCheckBox, addDOWTuesdayCheckBox, addDOWWednesdayCheckBox,
                 addDepTimeHourTextField, addDepTimeMinutesTextArea, addDepTimeZoneComboBox, addDistanceTextField, addFlightNumScrollBar, addFlightlevelComboBox,
-                addFlightnumLabel, addFlighttimeTextArea, addFlighttypeComboBox, addPriceTextField, addRouteTextArea, addScheduleMessageLabel, addSchedulesAirplaneVBox);
+                addFlightnumLabel, addFlighttimeTextArea, addFlighttypeComboBox, addPriceTextField, addRouteTextArea, addScheduleMessageLabel, addSchedulesAirplaneVBox,
+                addAircraftICAO, addAircraftType, addAircraftName, addAircraftRegistration, addAircraftMAXPax, addAircraftMaxCargo, addAircraftDownloadLink, addAircraftImageLink,
+                addAircraftRange, addAircraftWeight, addAircraftCruise, addAircraftMinRank, addAircraftEnabledSlider, addAircraftEnabledButton, addAircraftImageView,
+                addAircraftRoutesVBox, addAircraftFilterCoutesCheckBox, addAircraftRoutesFilterICAOTextField, addAircraftAddPlusRoute, addAircraftAircraftONLY, addAircraftClear,
+                addAircraftMessageLabel);
 
         allSchedulesList = new ArrayList<Schedules>();
         databaseTabs = new Tab[]{airplanesTAB, routesTAB, pilotsTAB, problematicRoutesTAB, chatTAB, addTAB};
@@ -627,6 +677,7 @@ public class MainUIController implements Initializable {
             dbQueryTextArea.setDisable(true);
             submitQueryToDBButton.setDisable(true);
             createMissingRoutesButton.setDisable(true);
+            deleteAllDBData();
             connectToDBButton.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent e) {
@@ -779,8 +830,8 @@ public class MainUIController implements Initializable {
 
     @FXML
     private void addSchedule(ActionEvent event) {
-        if (addTab.addSchedule(event)) {
-            getRoutesFromDataBase();
+        if (!addTab.addSchedule(event)) {
+            System.out.println("Schedule could not be added!");
         }
     }
 
@@ -880,7 +931,7 @@ public class MainUIController implements Initializable {
             } catch (SQLException e) {
                 lastpirep = new Date(0);
             }
-            Date lastclient = sqlHandler.getLastClientLoginByPilotID(pilotid);            
+            Date lastclient = sqlHandler.getLastClientLoginByPilotID(pilotid);
             int vatsimid = sqlHandler.getVatsimIDByPilotID(pilotid);
 
             Pilots pilot = new Pilots(pilotid, firstname, lastname, email, location, hub, password, salt, bgimage, lastlogin, totalflights, totalhours, totalpay, transferhours, rankid, rank, ranklevel, confirmed, retired, joindate, lastpirep, lastclient, vatsimid);
@@ -888,6 +939,124 @@ public class MainUIController implements Initializable {
 
         }
         pilotsTab.createList(pilotsList);
+    }
+
+    private void deleteAllDBData() {
+        allSchedulesList.clear();
+        aircraftList.clear();
+        pilotsList.clear();
+        chatList.clear();
+        faultySchedulesList.clear();
+    }
+
+    public boolean createNewSchedule(Schedules schedule) {
+        String[] fi = new String[15];
+        fi[0] = schedule.getFlightnum();
+        fi[1] = schedule.getDepicao();
+        fi[2] = schedule.getArricao();
+        fi[3] = schedule.getRoute();
+        fi[4] = schedule.getRouteDetails();
+        fi[5] = schedule.getAircraft();
+        fi[6] = schedule.getFlightlevel();
+        fi[7] = String.valueOf(schedule.getDistance());
+        fi[8] = schedule.getDeptime();
+        fi[9] = schedule.getArrtime();
+        fi[10] = String.valueOf(schedule.getFlighttime());
+        fi[11] = schedule.getDaysofweek();
+        fi[12] = String.valueOf(schedule.getPrice());
+        fi[13] = schedule.getFlighttype();
+        fi[14] = schedule.getNotes();
+
+        //returns true if sql operation is succesfull, false if not
+        boolean scheduleAdded = sqlHandler.executeQuery("INSERT INTO wdwvacom_wdw.schedules (code, flightnum, depicao, arricao, route, route_details, aircraft, flightlevel, distance, deptime, arrtime, flighttime, daysofweek, price, flighttype, timesflown, notes, enabled, bidid) \n"
+                + "	VALUES ('WDW', '" + fi[0] + "', '" + fi[1] + "', '" + fi[2] + "', '" + fi[3] + "', '" + fi[4] + "', '" + fi[5] + "', '" + fi[6] + "', " + fi[7] + ", '" + fi[8] + "', '" + fi[9] + "', " + fi[10] + ", '" + fi[11] + "', " + fi[12] + ", '" + fi[13] + "', DEFAULT, '" + fi[14] + "', DEFAULT, DEFAULT);");
+
+        if (scheduleAdded) {
+            schedule.setId(sqlHandler.getIDOfScheduleByFlightnum(schedule.getFlightnum()));
+            allSchedulesList.add(schedule);
+        }
+        return scheduleAdded;
+    }
+
+    public boolean createNewAircraft(Aircraft aircraft) {
+        boolean registrationAvailable = true;
+        for (Aircraft instance : aircraftList) {
+            if (instance.getRegistration().equalsIgnoreCase(aircraft.getRegistration())) {
+                registrationAvailable = false;
+            }
+        }
+        if(registrationAvailable){
+        String[] ai = new String[13];
+        ai[0] = aircraft.getIcao();
+        ai[1] = aircraft.getName();
+        ai[2] = aircraft.getFullname();
+        ai[3] = aircraft.getRegistration();
+        ai[4] = aircraft.getDownloadlink();
+        ai[5] = aircraft.getImagelink();
+        ai[6] = aircraft.getRange();
+        ai[7] = aircraft.getWeight();
+        ai[8] = aircraft.getCruise();
+        ai[9] = String.valueOf(aircraft.getMaxpax());
+        ai[10] = String.valueOf(aircraft.getMaxcargo());
+        ai[11] = String.valueOf(aircraft.getMinrank());
+        ai[12] = String.valueOf(aircraft.getEnabled());
+
+        boolean aircraftAdded = sqlHandler.executeQuery("INSERT INTO wdwvacom_wdw.aircraft (icao, `name`, fullname, registration, downloadlink, imagelink, `range`, weight, cruise, maxpax, maxcargo, minrank, ranklevel, enabled) \n"
+                + "	VALUES ('" + ai[0] + "', '" + ai[1] + "', '" + ai[2] + "', '" + ai[3] + "', '" + ai[4] + "', '" + ai[5] + "', '" + ai[6] + "', '" + ai[7] + "', '" + ai[8] + "', " + ai[9] + ", " + ai[10] + ", " + ai[11] + ", DEFAULT, " + ai[12] + ")");
+
+        if (aircraftAdded) {
+            aircraft.setId(sqlHandler.getIDOfAircraftByRegistration(aircraft.getRegistration()));
+            aircraftList.add(aircraft);
+        }
+        return aircraftAdded;}
+        else{
+            return false;
+        }
+    }
+
+    @FXML
+    private void addAircraftImageLinkEntered(ActionEvent event) {
+        addTab.addAircraftImageLinkEntered(event);
+    }
+
+    @FXML
+    private void onlyShowRoutesContainingOnAction(ActionEvent event) {
+        addTab.onlyShowRoutesContainingOnAction(event);
+    }
+
+    @FXML
+    private void onlyShowRoutesICAOOnAction(ActionEvent event) {
+        addTab.onlyShowRoutesICAOOnAction(event);
+    }
+
+    @FXML
+    private void addAircraftAndRoutePressed(ActionEvent event) {
+        addTab.addAircraftAndRoutePressed(event);
+    }
+
+    @FXML
+    private void addAircraftAircraftONLYPressed(ActionEvent event) {
+        addTab.addAircraftAircraftONLYPressed(event);
+    }
+
+    @FXML
+    private void addAircraftClearPressed(ActionEvent event) {
+        addTab.addAircraftClearPressed(event);
+    }
+
+    @FXML
+    private void addAircraftEnableToggled(ActionEvent event) {
+        addTab.enableAircraftToggled(event);
+    }
+    
+    @FXML
+    private void suggestRoutesForAircraft(ActionEvent event){
+        addTab.suggestRoutesForAircraft(event);
+    }
+
+    @FXML
+    private void addAircraftCheckAllRoutes(ActionEvent event) {
+        addTab.addAircraftCheckAllRoutes(event);
     }
 
 }
