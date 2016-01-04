@@ -10,9 +10,12 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
@@ -157,6 +160,19 @@ public class AddTabController {
         takenFlightnums = new ArrayList<>();
         checkBoxes = new CheckBox[]{dOWMondayCheckBox, dOWTuesdayCheckBox, dOWWednesdayCheckBox, dOWThursdayCheckBox, dOWFridayCheckBox, dOWSaturdayCheckBox, dOWSundayCheckBox};
         addAircraftEnabledButton.setStyle(STYLE.setBackgroundTransparent());
+
+        distanceTextField.setOnAction((ActionEvent event) -> {
+            priceTextField.setText(String.valueOf((int) (getDistance() / 3.4)));
+        });
+
+        distanceTextField.focusedProperty().addListener((ObservableValue<? extends Boolean> arg0, Boolean oldPropertyValue, Boolean newPropertyValue) -> {
+            if (newPropertyValue) {
+                //On Focus
+            } else {
+                //Focus lost
+                priceTextField.setText(String.valueOf((int) (getDistance() / 3.4)));
+            }
+        });
 
     }
 

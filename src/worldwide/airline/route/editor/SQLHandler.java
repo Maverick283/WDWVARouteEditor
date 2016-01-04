@@ -5,7 +5,8 @@
  */
 package worldwide.airline.route.editor;
 
-import com.mysql.jdbc.exceptions.MySQLNonTransientConnectionException;
+
+import com.mysql.jdbc.exceptions.jdbc4.MySQLNonTransientConnectionException;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.ResultSet;

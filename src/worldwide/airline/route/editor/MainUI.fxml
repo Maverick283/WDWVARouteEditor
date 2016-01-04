@@ -234,8 +234,17 @@
                      <content>
                         <AnchorPane prefHeight="538.0" prefWidth="1000.0">
                            <children>
-                              <ListView fx:id="messageList" layoutX="14.0" layoutY="41.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="41.0" />
+                              <ListView fx:id="messageList" layoutX="14.0" layoutY="41.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="44.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="41.0" />
                               <CheckBox fx:id="showSystemMessagsCheckBox" layoutX="802.0" layoutY="14.0" mnemonicParsing="false" onAction="#refreshChatHistory" text="Show System Messages" />
+                              <HBox alignment="CENTER" layoutX="-25.0" layoutY="442.0" prefHeight="40.0" prefWidth="1000.0" spacing="14.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="498.0">
+                                 <children>
+                                    <TextField fx:id="chatTextBox" prefWidth="1000.0" />
+                                    <Button fx:id="chatSendButton" minWidth="-Infinity" mnemonicParsing="false" prefWidth="60.0" text="Send" />
+                                 </children>
+                                 <padding>
+                                    <Insets left="14.0" right="14.0" />
+                                 </padding>
+                              </HBox>
                            </children>
                         </AnchorPane>
                      </content>
@@ -560,7 +569,7 @@
             <Separator prefWidth="200.0" />
             <HBox alignment="CENTER_RIGHT" maxHeight="30.0" minHeight="30.0" prefHeight="30.0">
                <children>
-                  <Label fx:id="loginStatusLabel" alignment="CENTER_RIGHT" prefWidth="200.0" text="Not logged in!" />
+                  <Label fx:id="loginStatusLabel" alignment="CENTER_RIGHT" prefHeight="17.0" prefWidth="400.0" text="Not logged in!" />
                </children>
                <padding>
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />

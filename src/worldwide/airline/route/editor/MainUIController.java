@@ -22,14 +22,18 @@ import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -83,6 +87,9 @@ public class MainUIController implements Initializable {
     private String URL;
     private String USERNAME;
     private String PASSWORD;
+    private String USERPASSWORD;
+    private String USERID;
+
     @FXML
     private Button connectToDBButton;
     @FXML
@@ -284,6 +291,12 @@ public class MainUIController implements Initializable {
     private Label addAircraftMessageLabel;
     @FXML
     private CheckBox addAircraftCheckAll;
+    @FXML
+    private TextField chatTextBox;
+    @FXML
+    private Button chatSendButton;
+
+    private Pilots user;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -305,7 +318,7 @@ public class MainUIController implements Initializable {
                 rangeLabel, weightLabel, cruiseLabel, maxpaxLabel, maxcargoLabel, minrankLabel, ranklevelLabel, aircraftImage, enabledSlider, toggleAircraftEnabledButton);
         pilotsTab = new PilotsTabController(this, pilotsTable, sqlHandler);
         probelmaticRouteTab = new ProbelmaticRouteTabController(problematicRouteTable, this, sqlHandler);
-        chatTab = new ChatTabController(messageList, showSystemMessagsCheckBox);
+        chatTab = new ChatTabController(this, chatTextBox, chatSendButton, messageList, showSystemMessagsCheckBox);
         externalDBTab = new ExternalDBTabController(this, externalDB.getRoutes(), externalDB.getAirports(), externalDB.getAirlines(), externalDBRoutesTableView,
                 externalDBAirlinesTableView, externalDBAirportsTableView);
         routesTab = new RoutesTabController(this, routeTable, sqlHandler);
@@ -330,7 +343,7 @@ public class MainUIController implements Initializable {
         setConnectingInfoText("Opening Connection... This will take a bit...");
         try {
             Class.forName("com.mysql.jdbc.Driver");
-            con = DriverManager.getConnection(URL, USERNAME, PASSWORD);
+            con = DriverManager.getConnection(URL, USERNAME, Cryption.decrypt(PASSWORD));
             Platform.runLater(() -> {
                 try {
                     //internal changes
@@ -338,10 +351,15 @@ public class MainUIController implements Initializable {
                     getAircrafts();
                     getChat();
                     getPilotsFromDataBase();
+                    user = tryLogOn();
                     addTab.initWithData();
                     //ui changes
                     connectionChanged(sqlHandler.connectionAvail());
-                    loginStatusLabel.setText("Connected as " + USERNAME);
+                    String connectionText = "Connected as " + USERNAME;
+                    if(user!=null){
+                        connectionText = connectionText + ", Pilot " + user.getFirstname() + " " + user.getLastname();
+                    }
+                    loginStatusLabel.setText(connectionText);
                     setConnectingInfoText("Connected");
                     dbQueryTextArea.setDisable(false);
                     submitQueryToDBButton.setDisable(false);
@@ -560,6 +578,14 @@ public class MainUIController implements Initializable {
                         PASSWORD = value;
                         System.out.println("PASSWORD = " + PASSWORD);
                         break;
+                    case "USERID":
+                        USERID = value;
+                        System.out.println("USERID = " + USERID);
+                        break;
+                    case "USERPASSWORD":
+                        USERPASSWORD = value;
+                        System.out.println("USERPASSWORD = " + USERPASSWORD);
+                        break;
                     default:
                         System.out.println("Login data not complete...");
                         break;
@@ -586,7 +612,8 @@ public class MainUIController implements Initializable {
 
         Text scenetitle = new Text("Welcome");
         scenetitle.setFont(Font.font("Tahoma", FontWeight.NORMAL, 20));
-        grid.add(scenetitle, 0, 0, 2, 1);
+        GridPane.setHalignment(scenetitle, HPos.CENTER);
+        grid.add(scenetitle, 0, 0, 5, 1);
 
         Label userName = new Label("User Name:");
         grid.add(userName, 0, 1);
@@ -614,12 +641,25 @@ public class MainUIController implements Initializable {
                 userTextField.setText(USERNAME);
             }
             if (!PASSWORD.isEmpty()) {
-                pwBox.setText(PASSWORD);
+                pwBox.setText(Cryption.decrypt(PASSWORD));
             }
         } catch (NullPointerException e) {
             System.out.println("User Credentials Fail!");
             e.printStackTrace(System.err);
         }
+
+        Label pilotID = new Label("WDW");
+        GridPane.setHalignment(pilotID, HPos.RIGHT);
+        grid.add(pilotID, 3, 1);
+
+        TextField pilotIDTextField = new TextField();
+        grid.add(pilotIDTextField, 4, 1);
+
+        Label passwordLabel = new Label("Password");
+        grid.add(passwordLabel, 3, 2);
+
+        PasswordField passwordField = new PasswordField();
+        grid.add(passwordField, 4, 2);
 
         Button btn = new Button("Sign in");
         HBox hbBtn = new HBox(10);
@@ -632,14 +672,16 @@ public class MainUIController implements Initializable {
             public void handle(ActionEvent e) {
                 URL = urlTextField.getText();
                 USERNAME = userTextField.getText();
-                PASSWORD = pwBox.getText();
+                PASSWORD = Cryption.encrypt(pwBox.getText());
+                USERID = pilotIDTextField.getText();
+                USERPASSWORD = Cryption.encrypt(passwordField.getText());
                 loginStage.close();
                 saveLoginData();
             }
 
         });
 
-        Scene scene = new Scene(grid, 300, 275);
+        Scene scene = new Scene(grid, 500, 275);
         loginStage.setScene(scene);
     }
 
@@ -657,6 +699,10 @@ public class MainUIController implements Initializable {
             writer.write("USERNAME = " + USERNAME);
             writer.newLine();
             writer.write("PASSWORD = " + PASSWORD);
+            writer.newLine();
+            writer.write("USERID = " + USERID);
+            writer.newLine();
+            writer.write("USERPASSWORD = " + USERPASSWORD);
         } catch (Exception e) {
             e.printStackTrace(System.err);
         } finally {
@@ -725,9 +771,9 @@ public class MainUIController implements Initializable {
         String ROUTES = calc.getTempPath() + "/routes.dat";
         String AIRLINES = calc.getTempPath() + "/airlines.dat";
         String AIRPORTS = calc.getTempPath() + "/airports.dat";
-        calc.saveFile("http://sourceforge.net/p/openflights/code/HEAD/tree/openflights/data/routes.dat?format=raw", ROUTES);
-        calc.saveFile("http://sourceforge.net/p/openflights/code/HEAD/tree/openflights/data/airlines.dat?format=raw", AIRLINES);
-        calc.saveFile("http://sourceforge.net/p/openflights/code/HEAD/tree/openflights/data/airports.dat?format=raw", AIRPORTS);
+        calc.saveFile("https://raw.githubusercontent.com/jpatokal/openflights/master/data/routes.dat?format=raw", ROUTES);
+        calc.saveFile("https://raw.githubusercontent.com/jpatokal/openflights/master/data/airlines.dat", AIRLINES);
+        calc.saveFile("https://raw.githubusercontent.com/jpatokal/openflights/master/data/airports.dat", AIRPORTS);
         externalDB.refreshData();
         externalDBTab.refresh();
     }
@@ -985,31 +1031,31 @@ public class MainUIController implements Initializable {
                 registrationAvailable = false;
             }
         }
-        if(registrationAvailable){
-        String[] ai = new String[13];
-        ai[0] = aircraft.getIcao();
-        ai[1] = aircraft.getName();
-        ai[2] = aircraft.getFullname();
-        ai[3] = aircraft.getRegistration();
-        ai[4] = aircraft.getDownloadlink();
-        ai[5] = aircraft.getImagelink();
-        ai[6] = aircraft.getRange();
-        ai[7] = aircraft.getWeight();
-        ai[8] = aircraft.getCruise();
-        ai[9] = String.valueOf(aircraft.getMaxpax());
-        ai[10] = String.valueOf(aircraft.getMaxcargo());
-        ai[11] = String.valueOf(aircraft.getMinrank());
-        ai[12] = String.valueOf(aircraft.getEnabled());
+        if (registrationAvailable) {
+            String[] ai = new String[13];
+            ai[0] = aircraft.getIcao();
+            ai[1] = aircraft.getName();
+            ai[2] = aircraft.getFullname();
+            ai[3] = aircraft.getRegistration();
+            ai[4] = aircraft.getDownloadlink();
+            ai[5] = aircraft.getImagelink();
+            ai[6] = aircraft.getRange();
+            ai[7] = aircraft.getWeight();
+            ai[8] = aircraft.getCruise();
+            ai[9] = String.valueOf(aircraft.getMaxpax());
+            ai[10] = String.valueOf(aircraft.getMaxcargo());
+            ai[11] = String.valueOf(aircraft.getMinrank());
+            ai[12] = String.valueOf(aircraft.getEnabled());
 
-        boolean aircraftAdded = sqlHandler.executeQuery("INSERT INTO wdwvacom_wdw.aircraft (icao, `name`, fullname, registration, downloadlink, imagelink, `range`, weight, cruise, maxpax, maxcargo, minrank, ranklevel, enabled) \n"
-                + "	VALUES ('" + ai[0] + "', '" + ai[1] + "', '" + ai[2] + "', '" + ai[3] + "', '" + ai[4] + "', '" + ai[5] + "', '" + ai[6] + "', '" + ai[7] + "', '" + ai[8] + "', " + ai[9] + ", " + ai[10] + ", " + ai[11] + ", DEFAULT, " + ai[12] + ")");
+            boolean aircraftAdded = sqlHandler.executeQuery("INSERT INTO wdwvacom_wdw.aircraft (icao, `name`, fullname, registration, downloadlink, imagelink, `range`, weight, cruise, maxpax, maxcargo, minrank, ranklevel, enabled) \n"
+                    + "	VALUES ('" + ai[0] + "', '" + ai[1] + "', '" + ai[2] + "', '" + ai[3] + "', '" + ai[4] + "', '" + ai[5] + "', '" + ai[6] + "', '" + ai[7] + "', '" + ai[8] + "', " + ai[9] + ", " + ai[10] + ", " + ai[11] + ", DEFAULT, " + ai[12] + ")");
 
-        if (aircraftAdded) {
-            aircraft.setId(sqlHandler.getIDOfAircraftByRegistration(aircraft.getRegistration()));
-            aircraftList.add(aircraft);
-        }
-        return aircraftAdded;}
-        else{
+            if (aircraftAdded) {
+                aircraft.setId(sqlHandler.getIDOfAircraftByRegistration(aircraft.getRegistration()));
+                aircraftList.add(aircraft);
+            }
+            return aircraftAdded;
+        } else {
             return false;
         }
     }
@@ -1048,15 +1094,36 @@ public class MainUIController implements Initializable {
     private void addAircraftEnableToggled(ActionEvent event) {
         addTab.enableAircraftToggled(event);
     }
-    
+
     @FXML
-    private void suggestRoutesForAircraft(ActionEvent event){
+    private void suggestRoutesForAircraft(ActionEvent event) {
         addTab.suggestRoutesForAircraft(event);
     }
 
     @FXML
     private void addAircraftCheckAllRoutes(ActionEvent event) {
         addTab.addAircraftCheckAllRoutes(event);
+    }
+
+    /**
+     * @return the user
+     */
+    public Pilots getUser() {
+        return user;
+    }
+
+    private Pilots tryLogOn() {
+        Pilots potentialUser = null;
+        for (Pilots pilot : pilotsList) {
+            if (pilot.getPilotid() == Integer.parseInt(USERID)) {
+                potentialUser = pilot;
+            }
+        }
+        if (potentialUser != null && potentialUser.getPassword().equals(Cryption.hashPassword(Cryption.decrypt(USERPASSWORD), potentialUser.getSalt()))) {
+            return potentialUser;
+        } else {
+            return null;
+        }
     }
 
 }
